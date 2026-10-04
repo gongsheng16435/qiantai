@@ -38,6 +38,12 @@ Every default photograph is bundled locally. The demo uses atmospheric photograp
 <img src="docs/screenshots/home-mobile.png" width="390" alt="LUMEN Discover on a phone" />
 </details>
 
+## 中文界面
+
+页面统一使用简体中文，导航、筛选、状态、表单和提示以清楚易懂为先，首页与时间线的叙事保留轻微诗意，例如「去过的远方，仍在心上」。中文标题采用适合阅读的字距、行高与宋体衬线，桌面和手机布局均已适配。
+
+游戏显示中文名称，同时支持英文原名搜索。日期按中文习惯显示，名称排序使用中文拼音顺序。状态与默认合集仍保留原有内部标识，已有本地记录和合集链接继续有效；用户自己填写的笔记和合集名称不会被翻译或覆盖。编辑合集时，中英文逗号均可分隔。
+
 ## Controls and accessibility
 
 | Control                    | Behavior                                                |

@@ -1,3 +1,10 @@
+import {
+  gameSearchText,
+  genreLabel,
+  platformLabel,
+  statusLabel,
+  collectionLabel,
+} from "../lib/labels";
 import { useMemo, useState } from "react";
 import { ArrowDownUp, Heart, Search, SlidersHorizontal, X } from "lucide-react";
 import { statuses, type Game } from "../data/games";
@@ -25,10 +32,7 @@ export default function Library({
       games
         .filter(
           (g) =>
-            (!search ||
-              `${g.title} ${g.studio} ${g.genre}`
-                .toLowerCase()
-                .includes(search.toLowerCase())) &&
+            (!search || gameSearchText(g).includes(search.toLowerCase())) &&
             (!genre || g.genre === genre) &&
             (!platform || g.platform === platform) &&
             (!status || g.status === status) &&
@@ -37,7 +41,7 @@ export default function Library({
         )
         .sort((a, b) =>
           sort === "title"
-            ? a.title.localeCompare(b.title)
+            ? a.title.localeCompare(b.title, "zh-CN")
             : sort === "score"
               ? b.score - a.score
               : sort === "hours"
@@ -66,19 +70,18 @@ export default function Library({
       <header className="page-heading shell">
         <Reveal>
           <p className="eyebrow">
-            THE PERSONAL ARCHIVE / {String(games.length).padStart(2, "0")}{" "}
-            WORLDS
+            我的游戏档案 / {String(games.length).padStart(2, "0")} 款游戏
           </p>
           <h1>
-            All your worlds.
+            万千世界，
             <br />
-            <em>One place.</em>
+            <em>一处珍藏。</em>
           </h1>
         </Reveal>
         <p>
-          The ones you finished. The ones you return to.
+          那些通关的故事，那些重返的旧地，
           <br />
-          And everything still waiting to be discovered.
+          还有尚未启程的远方。
         </p>
       </header>
       <div className="library-controls shell">
@@ -87,13 +90,13 @@ export default function Library({
             className={!favorites ? "active" : ""}
             onClick={() => setFavorites(false)}
           >
-            All games <span>{games.length}</span>
+            全部游戏 <span>{games.length}</span>
           </button>
           <button
             className={favorites ? "active" : ""}
             onClick={() => setFavorites(true)}
           >
-            <Heart size={15} /> Favorites{" "}
+            <Heart size={15} /> 我的收藏{" "}
             <span>{games.filter((g) => g.favorite).length}</span>
           </button>
         </div>
@@ -101,13 +104,13 @@ export default function Library({
           <label className="search-field">
             <Search size={17} />
             <input
-              aria-label="Search library"
-              placeholder="Find a world…"
+              aria-label="搜索游戏库"
+              placeholder="搜索游戏、中英文名称…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
             {search && (
-              <button aria-label="Clear search" onClick={() => setSearch("")}>
+              <button aria-label="清空搜索" onClick={() => setSearch("")}>
                 <X size={15} />
               </button>
             )}
@@ -118,23 +121,23 @@ export default function Library({
             aria-expanded={filters}
           >
             <SlidersHorizontal size={17} />
-            <span>Filters{active ? ` · ${active}` : ""}</span>
+            <span>筛选{active ? ` · ${active}` : ""}</span>
           </button>
         </div>
       </div>
       {filters && (
         <div className="filter-panel shell">
           {[
-            ["Genre", genre, setGenre, [...new Set(games.map((g) => g.genre))]],
+            ["类型", genre, setGenre, [...new Set(games.map((g) => g.genre))]],
             [
-              "Platform",
+              "平台",
               platform,
               setPlatform,
               [...new Set(games.map((g) => g.platform))],
             ],
-            ["Status", status, setStatus, statuses],
+            ["状态", status, setStatus, statuses],
             [
-              "Collection",
+              "合集",
               collection,
               setCollection,
               [...new Set(games.flatMap((g) => g.collections))],
@@ -147,30 +150,38 @@ export default function Library({
                 value={value as string}
                 onChange={(e) => (set as (s: string) => void)(e.target.value)}
               >
-                <option value="">All {String(label).toLowerCase()}s</option>
+                <option value="">全部{label as string}</option>
                 {(options as string[]).map((o) => (
-                  <option key={o}>{o}</option>
+                  <option key={o} value={o}>
+                    {label === "类型"
+                      ? genreLabel(o)
+                      : label === "平台"
+                        ? platformLabel(o)
+                        : label === "状态"
+                          ? statusLabel(o)
+                          : collectionLabel(o)}
+                  </option>
                 ))}
               </select>
             </label>
           ))}
           <button className="text-link" onClick={clear}>
-            Reset <X size={14} />
+            重置 <X size={14} />
           </button>
         </div>
       )}
       <div className="library-results shell">
         <span>
-          {filtered.length} {filtered.length === 1 ? "world" : "worlds"}
+          {filtered.length} 款游戏
           {collection && (
             <>
               {" "}
-              in{" "}
+              来自{" "}
               <button
                 className="inline-filter"
                 onClick={() => setCollection("")}
               >
-                {collection} <X size={12} />
+                {collectionLabel(collection)} <X size={12} />
               </button>
             </>
           )}
@@ -178,15 +189,15 @@ export default function Library({
         <label className="sort-label">
           <ArrowDownUp size={14} />
           <select
-            aria-label="Sort games"
+            aria-label="游戏排序"
             value={sort}
             onChange={(e) => setSort(e.target.value)}
           >
-            <option value="recent">Recently played</option>
-            <option value="title">Title A–Z</option>
-            <option value="score">Personal score</option>
-            <option value="hours">Time played</option>
-            <option value="year">Release year</option>
+            <option value="recent">最近游玩</option>
+            <option value="title">名称（拼音顺序）</option>
+            <option value="score">个人评分</option>
+            <option value="hours">游玩时长</option>
+            <option value="year">发行年份</option>
           </select>
         </label>
       </div>
@@ -205,10 +216,8 @@ export default function Library({
         <Empty clear={clear} />
       )}
       <div className="library-colophon shell">
-        <span>GOOD STORIES DON’T HAVE AN EXPIRY DATE.</span>
-        <span>
-          END OF COLLECTION / {String(filtered.length).padStart(2, "0")}
-        </span>
+        <span>好故事，值得一再重逢。</span>
+        <span>本次浏览至此 / {String(filtered.length).padStart(2, "0")}</span>
       </div>
     </div>
   );

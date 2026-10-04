@@ -50,7 +50,7 @@ export default function App() {
   }, []);
   useEffect(() => {
     setMenu(false);
-    document.title = `${game?.title || ({ "/": "Your worlds", "/library": "Library", "/timeline": "Timeline", "/statistics": "A life in play", "/tv": "TV mode" } as Record<string, string>)[path] || "Not found"} — LUMEN`;
+    document.title = `${game?.title || ({ "/": "你的世界", "/library": "游戏库", "/timeline": "时间线", "/statistics": "游玩足迹", "/tv": "大屏模式" } as Record<string, string>)[path] || "页面未找到"} — LUMEN`;
     if (initial.current) {
       initial.current = false;
     } else main.current?.focus({ preventScroll: true });
@@ -66,10 +66,10 @@ export default function App() {
     update(id, { favorite: !game.favorite });
   };
   const nav = [
-    ["/", "Discover"],
-    ["/library", "Library"],
-    ["/timeline", "Timeline"],
-    ["/statistics", "Statistics"],
+    ["/", "发现"],
+    ["/library", "游戏库"],
+    ["/timeline", "时间线"],
+    ["/statistics", "统计"],
   ];
   return (
     <MotionConfig reducedMotion="user">
@@ -82,17 +82,17 @@ export default function App() {
           main.current?.scrollIntoView();
         }}
       >
-        Skip to content
+        跳至主要内容
       </a>
       {!isTV && (
         <header
           className={`site-header ${isDark ? "on-dark" : "on-light"} ${menu ? "menu-open" : ""}`}
         >
-          <a href="#/" className="brand" aria-label="LUMEN home">
+          <a href="#/" className="brand" aria-label="LUMEN 首页">
             <Mark />
             LUMEN
           </a>
-          <nav aria-label="Main navigation">
+          <nav aria-label="主导航">
             {nav.map(([url, label]) => (
               <a
                 key={url}
@@ -107,7 +107,7 @@ export default function App() {
           <div className="header-actions">
             <button
               className="search-trigger"
-              aria-label="Search games, Command or Control K"
+              aria-label="搜索游戏，快捷键 Command 或 Control 加 K"
               onClick={() => setSearch(true)}
             >
               <SearchIcon size={18} />
@@ -116,11 +116,11 @@ export default function App() {
             <span className="header-divider" />
             <a href="#/tv" className="tv-trigger">
               <MonitorPlay size={18} />
-              <span>TV mode</span>
+              <span>大屏模式</span>
             </a>
             <button
               className="mobile-menu icon-button"
-              aria-label={menu ? "Close navigation" : "Open navigation"}
+              aria-label={menu ? "收起导航" : "展开导航"}
               aria-expanded={menu}
               onClick={() => setMenu(!menu)}
             >
@@ -128,7 +128,7 @@ export default function App() {
             </button>
           </div>
           {menu && (
-            <nav className="mobile-nav" aria-label="Mobile navigation">
+            <nav className="mobile-nav" aria-label="移动端导航">
               {nav.map(([url, label]) => (
                 <a href={`#${url}`} key={url} onClick={() => setMenu(false)}>
                   {label}
@@ -144,7 +144,7 @@ export default function App() {
           fallback={
             <div className="page-loading">
               <Mark />
-              <p>Finding your world…</p>
+              <p>正在展开你的世界…</p>
             </div>
           }
         >
@@ -175,10 +175,10 @@ export default function App() {
                 <TV games={games} />
               ) : (
                 <div className="not-found">
-                  <p className="eyebrow">OFF THE MAP</p>
-                  <h1>This world is still undiscovered.</h1>
+                  <p className="eyebrow">地图之外</p>
+                  <h1>这片世界，还未抵达。</h1>
                   <button className="button dark" onClick={() => go("/")}>
-                    Back to your worlds
+                    返回首页
                   </button>
                 </div>
               )}
@@ -193,14 +193,14 @@ export default function App() {
               <Mark />
               LUMEN
             </a>
-            <span>A little space for the worlds you love.</span>
+            <span>为热爱的世界，留一处安放。</span>
             <a href="#/library">
-              Your personal archive <ArrowUpRight size={14} />
+              我的游戏档案 <ArrowUpRight size={14} />
             </a>
           </div>
           <div className="shell footer-fine">
-            <span>DESIGNED FOR THE LOVE OF PLAY.</span>
-            <span>Local-first. Yours, always.</span>
+            <span>因热爱，而珍藏。</span>
+            <span>记录留在此处，故事始终属于你。</span>
           </div>
         </footer>
       )}

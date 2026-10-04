@@ -63,11 +63,9 @@ export function useArchive() {
     setPatches(next);
     try {
       localStorage.setItem(KEY, JSON.stringify(next));
-      setNotice("Saved to your archive");
+      setNotice("已保存到你的游戏档案");
     } catch {
-      setNotice(
-        "Browser storage is unavailable. Changes will last for this session.",
-      );
+      setNotice("浏览器存储暂不可用，本次修改仅在当前会话中保留。");
     }
   }
   return {
@@ -92,12 +90,12 @@ export function useRoute() {
   }, []);
   return route;
 }
-export function displayDate(date: string) {
+export function displayDate(date: string, includeYear = true) {
   return date
-    ? new Date(`${date}T12:00:00`).toLocaleDateString("en-US", {
-        month: "short",
+    ? new Date(`${date}T12:00:00`).toLocaleDateString("zh-CN", {
+        month: "long",
         day: "numeric",
-        year: "numeric",
+        year: includeYear ? "numeric" : undefined,
       })
-    : "Not yet";
+    : "尚未记录";
 }

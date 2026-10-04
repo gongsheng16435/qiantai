@@ -1,3 +1,10 @@
+import {
+  genreLabel,
+  platformLabel,
+  statusLabel,
+  collectionLabel,
+  collectionKey,
+} from "../lib/labels";
 import { useState } from "react";
 import {
   ArrowLeft,
@@ -33,50 +40,48 @@ export default function Detail({
           <h1>{game.title}</h1>
           <p className="detail-kicker">{game.kicker}</p>
           <div className="detail-tags">
-            <span>{game.platform}</span>
-            <span>{game.genre}</span>
+            <span>{platformLabel(game.platform)}</span>
+            <span>{genreLabel(game.genre)}</span>
             <span className="status-label">
               <i />
-              {game.status}
+              {statusLabel(game.status)}
             </span>
           </div>
           <div className="detail-actions">
             <button className="button ivory" onClick={() => setEditing(true)}>
-              <Pencil size={16} /> Edit my story
+              <Pencil size={16} /> 编辑我的记录
             </button>
             <button
               className={`button glass ${game.favorite ? "saved" : ""}`}
               onClick={() => update(game.id, { favorite: !game.favorite })}
             >
               <Heart size={17} fill={game.favorite ? "currentColor" : "none"} />
-              {game.favorite ? "A favorite" : "Add to favorites"}
+              {game.favorite ? "已收藏" : "加入收藏"}
             </button>
           </div>
         </div>
-        <span className="detail-art-label">
-          ATMOSPHERIC ARTWORK / PERSONAL ARCHIVE
-        </span>
+        <span className="detail-art-label">意境影像 / 私人游戏档案</span>
       </section>
       <section className="detail-body shell">
         <Reveal className="detail-intro">
           <div>
-            <p className="eyebrow">A WORLD WORTH REMEMBERING</p>
+            <p className="eyebrow">一个值得记住的世界</p>
             <h2>{game.kicker}</h2>
             <p>{game.description}</p>
           </div>
           <dl className="personal-metrics">
             <div>
-              <dt>YOUR SCORE</dt>
+              <dt>个人评分</dt>
               <dd>
                 {game.score}
                 <span>/100</span>
               </dd>
             </div>
             <div>
-              <dt>TIME WELL SPENT</dt>
+              <dt>游玩时长</dt>
               <dd>
                 {game.playtime}
-                <span>hours</span>
+                <span>小时</span>
               </dd>
             </div>
           </dl>
@@ -84,13 +89,13 @@ export default function Detail({
         <Reveal className="gallery-section">
           <div className="section-heading">
             <div>
-              <p className="eyebrow">THROUGH ANOTHER LENS</p>
-              <h2>Scenes & screenshots.</h2>
+              <p className="eyebrow">把目光，再停留片刻</p>
+              <h2>沿途影像。</h2>
             </div>
             <span className="small-note">
               {game.provider === "local"
-                ? "Atmospheric studies · demo imagery"
-                : "From this world"}
+                ? "意境摄影 · 非游戏实机截图"
+                : "来自这个世界"}
             </span>
           </div>
           <div className="gallery-grid">
@@ -98,11 +103,11 @@ export default function Detail({
               <button
                 key={`${src}-${i}`}
                 onClick={() => setSlide(i)}
-                aria-label={`Enlarge scene ${i + 1}`}
+                aria-label={`放大第 ${i + 1} 张图片`}
               >
                 <Artwork
                   src={src}
-                  alt={`${game.title} atmospheric scene ${i + 1}`}
+                  alt={`《${game.title}》意境影像，第 ${i + 1} 张`}
                 />
                 <span>
                   0{i + 1} <Plus size={18} />
@@ -115,44 +120,41 @@ export default function Detail({
           <Reveal>
             <div className="section-heading">
               <div>
-                <p className="eyebrow">THE PART ONLY YOU CAN TELL</p>
-                <h2>A note to remember.</h2>
+                <p className="eyebrow">有些感受，只有你知道</p>
+                <h2>留几句，给记忆。</h2>
               </div>
               <button
                 className="icon-button"
                 onClick={() => setEditing(true)}
-                aria-label="Edit notes"
+                aria-label="编辑笔记"
               >
                 <Pencil size={18} />
               </button>
             </div>
             <blockquote>
-              {game.notes ||
-                "Every world leaves something behind. What will you remember about this one?"}
+              {game.notes || "每个世界，都会留下些什么。这一程，你想记住什么？"}
             </blockquote>
             <span className="journal-caption">
-              {game.notes
-                ? "FROM YOUR PERSONAL JOURNAL"
-                : "YOUR STORY IS STILL BEING WRITTEN"}
+              {game.notes ? "摘自你的游玩手记" : "你的故事，仍在续写"}
             </span>
           </Reveal>
           <Reveal className="detail-dates">
-            <p className="eyebrow">YOUR JOURNEY</p>
+            <p className="eyebrow">我的旅程</p>
             <dl>
               <div>
-                <dt>First played</dt>
+                <dt>首次游玩</dt>
                 <dd>{displayDate(game.firstPlayedAt)}</dd>
               </div>
               <div>
-                <dt>Last visited</dt>
+                <dt>最近游玩</dt>
                 <dd>{displayDate(game.lastPlayedAt)}</dd>
               </div>
               <div>
-                <dt>Finished</dt>
+                <dt>通关日期</dt>
                 <dd>{displayDate(game.completedAt)}</dd>
               </div>
             </dl>
-            <p className="eyebrow">FILED UNDER</p>
+            <p className="eyebrow">所属合集</p>
             <div className="collection-tags">
               {game.collections.length ? (
                 game.collections.map((c) => (
@@ -160,13 +162,13 @@ export default function Detail({
                     key={c}
                     href={`#/library?collection=${encodeURIComponent(c)}`}
                   >
-                    {c}
+                    {collectionLabel(c)}
                     <ArrowRight size={14} />
                   </a>
                 ))
               ) : (
                 <button className="text-link" onClick={() => setEditing(true)}>
-                  Add to a collection <Plus size={15} />
+                  加入合集 <Plus size={15} />
                 </button>
               )}
             </div>
@@ -175,13 +177,13 @@ export default function Detail({
       </section>
       {editing && (
         <Modal
-          title={`Edit ${game.title}`}
+          title={`编辑《${game.title}》的记录`}
           onClose={() => setEditing(false)}
           className="edit-modal"
         >
-          <p className="eyebrow">YOUR PERSONAL ARCHIVE</p>
-          <h2>Make it yours.</h2>
-          <p className="modal-subtitle">{game.title} · Saved on this device</p>
+          <p className="eyebrow">我的游戏档案</p>
+          <h2>写下你的这一程。</h2>
+          <p className="modal-subtitle">{game.title} · 保存在此设备</p>
           <form
             onChange={(event) => {
               const first = event.currentTarget.querySelector<HTMLInputElement>(
@@ -203,9 +205,7 @@ export default function Detail({
                   e.currentTarget.querySelector(
                     '[name="firstPlayedAt"]',
                   ) as HTMLInputElement
-                ).setCustomValidity(
-                  "First played must be on or before the other dates.",
-                );
+                ).setCustomValidity("首次游玩日期不能晚于最近游玩或通关日期。");
                 e.currentTarget.reportValidity();
                 return;
               }
@@ -218,8 +218,8 @@ export default function Detail({
                 completedAt,
                 notes: String(data.get("notes")),
                 collections: String(data.get("collections"))
-                  .split(",")
-                  .map((s) => s.trim())
+                  .split(/[,，]/)
+                  .map((s) => collectionKey(s.trim()))
                   .filter(Boolean),
               });
               setEditing(false);
@@ -227,20 +227,22 @@ export default function Detail({
           >
             <div className="form-grid">
               <label>
-                Status
+                游玩状态
                 <select
-                  aria-label="Status"
+                  aria-label="游玩状态"
                   name="status"
                   defaultValue={game.status}
                   data-autofocus
                 >
                   {statuses.map((s) => (
-                    <option key={s}>{s}</option>
+                    <option key={s} value={s}>
+                      {statusLabel(s)}
+                    </option>
                   ))}
                 </select>
               </label>
               <label>
-                Personal score / 100
+                个人评分（满分 100）
                 <input
                   name="score"
                   type="number"
@@ -251,7 +253,7 @@ export default function Detail({
                 />
               </label>
               <label>
-                Playtime in hours
+                游玩时长（小时）
                 <input
                   name="playtime"
                   type="number"
@@ -263,7 +265,7 @@ export default function Detail({
                 />
               </label>
               <label>
-                First played
+                首次游玩
                 <input
                   type="date"
                   name="firstPlayedAt"
@@ -272,7 +274,7 @@ export default function Detail({
                 />
               </label>
               <label>
-                Last played
+                最近游玩
                 <input
                   type="date"
                   name="lastPlayedAt"
@@ -280,7 +282,7 @@ export default function Detail({
                 />
               </label>
               <label>
-                Completed on
+                通关日期
                 <input
                   type="date"
                   name="completedAt"
@@ -289,22 +291,22 @@ export default function Detail({
               </label>
             </div>
             <label>
-              Collections <span>Separate with commas</span>
+              合集 <span>多个合集用逗号分隔</span>
               <input
                 name="collections"
-                defaultValue={game.collections.join(", ")}
+                defaultValue={game.collections.map(collectionLabel).join("，")}
                 maxLength={1600}
-                placeholder="Quiet Sundays, All-time favorites"
+                placeholder="安静的周末，长久的偏爱"
               />
             </label>
             <label>
-              Personal notes
+              游玩笔记
               <textarea
                 name="notes"
                 rows={4}
                 maxLength={10000}
                 defaultValue={game.notes}
-                placeholder="A moment, a memory, a reason to return…"
+                placeholder="一瞬心动，一段回忆，一个重返的理由……"
               />
             </label>
             <div className="form-actions">
@@ -313,10 +315,10 @@ export default function Detail({
                 className="text-link"
                 onClick={() => setEditing(false)}
               >
-                Cancel
+                取消
               </button>
               <button className="button dark" type="submit">
-                Save my story <Check size={17} />
+                保存记录 <Check size={17} />
               </button>
             </div>
           </form>
@@ -324,19 +326,19 @@ export default function Detail({
       )}
       {slide !== null && (
         <Modal
-          title={`Scene ${slide + 1} of ${game.screenshots.length}`}
+          title={`第 ${slide + 1} 张图片，共 ${game.screenshots.length} 张`}
           onClose={() => setSlide(null)}
           className="lightbox"
         >
           <Artwork
             src={game.screenshots[slide]}
             eager
-            alt={`${game.title}, scene ${slide + 1}`}
+            alt={`《${game.title}》第 ${slide + 1} 张图片`}
           />
           <div className="lightbox-controls">
             <button
               className="icon-button"
-              aria-label="Previous scene"
+              aria-label="上一张图片"
               onClick={() =>
                 setSlide(
                   (slide + game.screenshots.length - 1) %
@@ -351,7 +353,7 @@ export default function Detail({
             </span>
             <button
               className="icon-button"
-              aria-label="Next scene"
+              aria-label="下一张图片"
               onClick={() => setSlide((slide + 1) % game.screenshots.length)}
             >
               <ArrowRight />

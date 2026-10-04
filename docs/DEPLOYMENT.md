@@ -2,7 +2,7 @@
 
 **Live site: https://gongsheng16435.github.io/qiantai/**
 
-[GitHub Actions run 37234920696](https://github.com/gongsheng16435/qiantai/actions/runs/37234920696) successfully built and deployed commit `15663ece8f19a059db926f893ab7f2bc6332891a`. The repository is configured to use GitHub Actions for Pages. Future application pushes to `main` trigger the same workflow; it can also be started manually from [Actions](https://github.com/gongsheng16435/qiantai/actions/workflows/pages.yml).
+The initial publication succeeded in [GitHub Actions run 37234920696](https://github.com/gongsheng16435/qiantai/actions/runs/37234920696). The current release is available at the live site above; [the workflow history](https://github.com/gongsheng16435/qiantai/actions/workflows/pages.yml) records subsequent deployments. The repository is configured to use GitHub Actions for Pages. Future application pushes to `main` trigger the same workflow; it can also be started manually from [Actions](https://github.com/gongsheng16435/qiantai/actions/workflows/pages.yml).
 
 ## Verified on the published site
 

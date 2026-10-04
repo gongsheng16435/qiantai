@@ -1,3 +1,4 @@
+import { platformLabel } from "../lib/labels";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
@@ -110,12 +111,12 @@ export default function TV({ games }: { games: Game[] }) {
           }}
         >
           <Mark />
-          LUMEN <span>LEAN BACK. GET LOST.</span>
+          LUMEN <span>坐下来，走远一点。</span>
         </a>
         <div>
           <button
             className="icon-button"
-            aria-label={fullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+            aria-label={fullscreen ? "退出全屏" : "进入全屏"}
             onClick={async () => {
               try {
                 if (document.fullscreenElement) await document.exitFullscreen();
@@ -123,7 +124,7 @@ export default function TV({ games }: { games: Game[] }) {
                 setMessage("");
               } catch {
                 setMessage(
-                  "Fullscreen is unavailable here. TV mode still works in this window.",
+                  "当前浏览器无法进入全屏，你仍可在此窗口使用大屏模式。",
                 );
               }
             }}
@@ -133,7 +134,7 @@ export default function TV({ games }: { games: Game[] }) {
           <button
             className="icon-button"
             onClick={exit}
-            aria-label="Exit TV mode"
+            aria-label="退出大屏模式"
           >
             <X size={22} />
           </button>
@@ -141,13 +142,12 @@ export default function TV({ games }: { games: Game[] }) {
       </header>
       <div className="tv-description">
         <p className="eyebrow light">
-          YOUR NEXT WORLD{" "}
-          <span> / {String(selected + 1).padStart(2, "0")}</span>
+          下一个世界 <span> / {String(selected + 1).padStart(2, "0")}</span>
         </p>
         <h1>{game.title}</h1>
         <p>{game.kicker}</p>
         <div className="tv-meta">
-          {game.platform}
+          {platformLabel(game.platform)}
           <i>·</i>
           {game.year}
           <i>·</i>
@@ -155,14 +155,14 @@ export default function TV({ games }: { games: Game[] }) {
           {game.favorite && <Heart size={15} fill="currentColor" />}
         </div>
         <a id="tv-open" className="text-link" href={`#/game/${game.id}`}>
-          Explore game <ArrowRight size={18} />
+          查看游戏 <ArrowRight size={18} />
         </a>
       </div>
       <div
         ref={ref}
         className="tv-rail"
         onKeyDown={railKeys}
-        aria-label="Select a game"
+        aria-label="选择游戏"
       >
         {games.map((g, i) => (
           <a
@@ -186,9 +186,9 @@ export default function TV({ games }: { games: Game[] }) {
       <footer className="tv-footer">
         <span>
           <kbd>←</kbd>
-          <kbd>→</kbd> Explore <kbd>↵</kbd> Open <kbd>esc</kbd> Return
+          <kbd>→</kbd> 浏览 <kbd>↵</kbd> 打开 <kbd>esc</kbd> 返回
         </span>
-        <span>{message || "YOUR UNIVERSE. A LITTLE BIGGER."}</span>
+        <span>{message || "让你的世界，再辽阔一点。"}</span>
       </footer>
     </div>
   );

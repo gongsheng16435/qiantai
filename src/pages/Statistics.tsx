@@ -1,3 +1,4 @@
+import { genreLabel, platformLabel } from "../lib/labels";
 import { ArrowUpRight } from "lucide-react";
 import type { Game } from "../data/games";
 import { Artwork, Reveal } from "../components/ui";
@@ -35,35 +36,36 @@ export default function Statistics({ games }: { games: Game[] }) {
     <div className="statistics-page">
       <header className="page-heading shell">
         <Reveal>
-          <p className="eyebrow">A LIFE IN PLAY</p>
+          <p className="eyebrow">游玩足迹</p>
           <h1>
-            Every hour.
+            每一段时光，
             <br />
-            <em>Part of your story.</em>
+            <em>都有回响。</em>
           </h1>
         </Reveal>
         <p>
-          A few numbers. A thousand memories.
-          <br />A different way to see the worlds you love.
+          数字之外，是千百次心动。
+          <br />
+          换个角度，看看自己的热爱。
         </p>
       </header>
       <Reveal className="stats-headline shell">
         <div className="hours-number">
-          {hours.toLocaleString()}
-          <span>hours of somewhere else.</span>
+          {hours.toLocaleString("zh-CN")}
+          <span>小时，曾在另一个世界。</span>
         </div>
         <p>
-          Time spent exploring, trying again,
+          探索、重来，也偶然遇见惊喜。
           <br />
-          and finding something extraordinary.
+          那些投入的时光，都有意义。
         </p>
       </Reveal>
       <div className="stats-summary shell">
         {[
-          [games.length, "Worlds collected"],
-          [completed, "Stories finished"],
-          [favorites, "Close to your heart"],
-          [average, "Average personal score"],
+          [games.length, "珍藏游戏"],
+          [completed, "已通关"],
+          [favorites, "我的收藏"],
+          [average, "平均个人评分"],
         ].map(([n, label]) => (
           <Reveal key={label}>
             <strong>{n}</strong>
@@ -75,52 +77,52 @@ export default function Statistics({ games }: { games: Game[] }) {
         <Artwork src={mostPlayed.hero} />
         <div className="collection-shade" />
         <div className="shell">
-          <p className="eyebrow light">THE WORLD YOU KNOW BY HEART</p>
+          <p className="eyebrow light">最熟悉的那片天地</p>
           <h2>{mostPlayed.title}</h2>
-          <p>{mostPlayed.playtime} hours. And always a reason to return.</p>
+          <p>{mostPlayed.playtime} 小时，仍有重返的理由。</p>
           <a className="text-link" href={`#/game/${mostPlayed.id}`}>
-            Revisit this world <ArrowUpRight size={19} />
+            再次走进这个世界 <ArrowUpRight size={19} />
           </a>
         </div>
       </section>
       <section className="stats-breakdown shell">
         <Reveal>
-          <p className="eyebrow">WHERE YOU PLAY</p>
+          <p className="eyebrow">游玩平台</p>
           <h2>
-            Different platforms.
+            屏幕不同，
             <br />
-            Same curiosity.
+            好奇如初。
           </h2>
           <div className="platform-list">
             {platforms.map(([name, count], i) => (
               <div key={name}>
                 <span className="platform-no">0{i + 1}</span>
                 <div>
-                  <strong>{name}</strong>
+                  <strong>{platformLabel(name)}</strong>
                   <span>
-                    {Math.round((count / games.length) * 100)}% of your archive
+                    {Math.round((count / games.length) * 100)}% 的游戏来自这里
                   </span>
                 </div>
                 <b>
                   {count}
-                  <small>games</small>
+                  <small>款游戏</small>
                 </b>
               </div>
             ))}
           </div>
         </Reveal>
         <Reveal>
-          <p className="eyebrow">WHAT DRAWS YOU IN</p>
+          <p className="eyebrow">偏爱的类型</p>
           <h2>
-            A taste for
+            循着热爱，
             <br />
-            the extraordinary.
+            遇见不凡。
           </h2>
           <div className="genre-bars">
             {genres.map(([name, count]) => (
               <div key={name}>
                 <div>
-                  <span>{name}</span>
+                  <span>{genreLabel(name)}</span>
                   <span>{count}</span>
                 </div>
                 <div className="bar-track">
@@ -133,16 +135,14 @@ export default function Statistics({ games }: { games: Game[] }) {
       </section>
       <section className="stats-charts shell">
         <Reveal>
-          <p className="eyebrow">YOUR OWN MEASURE</p>
-          <h2>The ones that resonate.</h2>
-          <p className="chart-description">
-            Personal scores, grouped by range.
-          </p>
+          <p className="eyebrow">属于你的刻度</p>
+          <h2>心里的分量。</h2>
+          <p className="chart-description">按个人评分区间，回看每一份喜爱。</p>
           <div
             className="score-chart"
             role="img"
             aria-label={buckets
-              .map((b) => `${b.label}: ${b.count} games`)
+              .map((b) => `${b.label} 分：${b.count} 款游戏`)
               .join("; ")}
           >
             {buckets.map((b) => (
@@ -161,16 +161,16 @@ export default function Statistics({ games }: { games: Game[] }) {
           </div>
         </Reveal>
         <Reveal>
-          <p className="eyebrow">GOOD STORIES ARE TIMELESS</p>
-          <h2>A collection across time.</h2>
-          <p className="chart-description">Your games, by release year.</p>
+          <p className="eyebrow">好故事，不受时间限制</p>
+          <h2>跨越岁月的珍藏。</h2>
+          <p className="chart-description">按发行年份，看看世界如何相遇。</p>
           <div
             className="year-chart"
             role="img"
             aria-label={years
               .map(
                 (y) =>
-                  `${y}: ${games.filter((g) => g.year === y).length} games`,
+                  `${y} 年：${games.filter((g) => g.year === y).length} 款游戏`,
               )
               .join("; ")}
           >

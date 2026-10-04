@@ -340,6 +340,7 @@ const seedGames: SeedGame[] = [
 ];
 
 export type Game = SeedGame & {
+  originalTitle: string;
   favorite: boolean;
   notes: string;
   collections: string[];
@@ -367,84 +368,106 @@ export type PersonalPatch = Partial<
 const stories: Record<string, [string, string]> = {
   bloodborne: [
     "FromSoftware",
-    "A city asleep. A nightmare awake. Every street in Yharnam holds a secret, and every victory asks something of you.",
+    "城市沉睡，噩梦醒来。雅南的每条长街都藏着秘密，而每一场险胜，都会留下自己的印记。",
   ],
   sekiro: [
     "FromSoftware",
-    "A blade, a promise, and the space between heartbeats. A journey through a broken land that teaches you to begin again.",
+    "一把刀，一个承诺，一息之间的抉择。穿行在破碎山河里，也在一次次重来中，学会向前。",
   ],
   tlou2: [
     "Naughty Dog",
-    "Quiet moments in a world that has forgotten how to be gentle. A story about the people we hold on to, and the things we cannot let go.",
+    "世界渐渐忘了温柔，仍有人守住片刻安宁。关于想要留住的人，也关于始终无法放下的事。",
   ],
   rdr2: [
     "Rockstar Games",
-    "The last light of the old West. Long rides, open skies, and a gang of outlaws looking for a place in a changing world.",
+    "旧西部的最后一抹余晖。长路、旷野与落日，一群亡命之徒，在变迁的时代里寻找归处。",
   ],
   godofwar: [
     "Santa Monica Studio",
-    "A father and son, far from home. Across the realms, the most important journey is the one they take toward each other.",
+    "离开故土的父与子，踏遍诸界。最漫长也最重要的路，是终于走近彼此。",
   ],
   uncharted4: [
     "Naughty Dog",
-    "One last adventure. A lost pirate colony, a familiar face, and the irresistible pull of the horizon.",
+    "失落的海盗国度，久违的面孔，还有地平线那头的召唤。说是最后一次，却仍舍不得停下。",
   ],
   nier: [
     "PlatinumGames",
-    "What remains when we are gone? A beautiful, restless meditation on being human, told by those who are not.",
+    "当我们离去，什么会留下？一场关于存在与人性的追问，由并非人类的生命，缓缓道来。",
   ],
   monsterhunter: [
     "Capcom",
-    "Follow the tracks into a living world. Learn its rhythms, meet its giants, and find your place in the wild.",
+    "循着足迹，走进鲜活的荒野。听懂它的节律，遇见它的巨兽，也找到自己在万物之间的位置。",
   ],
   hollowknight: [
     "Team Cherry",
-    "Beneath a quiet town, a forgotten kingdom waits. Every little light in the dark is a reason to keep going.",
+    "寂静小镇之下，遗忘的王国仍在等待。黑暗里每一点微光，都是继续前行的理由。",
   ],
   inside: [
     "Playdead",
-    "A boy, a forest, a world of questions. A wordless journey that lingers long after the screen goes dark.",
+    "一个男孩，一片森林，一个满是疑问的世界。这段无言的旅程，在屏幕熄灭后，仍久久回响。",
   ],
   journey: [
     "thatgamecompany",
-    "A distant mountain. A wordless connection. An extraordinary reminder that the journey matters more when it is shared.",
+    "一座远山，一场无言的相逢。有人同行时，旅途本身，便已值得珍藏。",
   ],
   abzu: [
     "Giant Squid",
-    "Leave the surface behind. Drift through a sunlit ocean and rediscover the quiet wonder of a world in motion.",
+    "告别水面，潜入光影流动的海洋。在鱼群与潮汐之间，重新找回对世界的惊奇。",
   ],
   titanfall2: [
     "Respawn Entertainment",
-    "An unlikely partnership at the edge of the frontier. Some bonds are built one impossible leap at a time.",
+    "边境尽头，一段意想不到的羁绊。有些信任，建立在每一次看似不可能的纵身一跃里。",
   ],
   nioh2: [
     "Team Ninja",
-    "Between the human and spirit worlds, forge your own story. Every encounter is a lesson in patience and precision.",
+    "在人与妖的边界，写下自己的故事。每一次交锋，都是关于耐心与分寸的修行。",
   ],
   gta5: [
     "Rockstar Games",
-    "Three lives collide beneath the Los Santos sun. A sprawling playground of ambition, absurdity, and possibility.",
+    "三段人生，在洛圣都的阳光下交错。野心、荒诞与无尽可能，共同铺开这座城市的底色。",
   ],
   evilwithin: [
     "Tango Gameworks",
-    "Nothing is quite what it seems. Follow a fragile thread of hope through a nightmare that refuses to end.",
+    "眼前所见，未必是真。在不肯结束的噩梦里，循着一线微光，寻找归途。",
   ],
   deadcells: [
     "Motion Twin",
-    "One more run. One more room. Find a little more courage in every new beginning.",
+    "再试一次，再过一关。每一个新的起点，都藏着比上一次多一点的勇气。",
   ],
   hades: [
     "Supergiant Games",
-    "A family story told one escape attempt at a time. Fight your way home, even if home is the place you are leaving.",
+    "每一次逃离，都在讲述同一个家庭的故事。为了归处而战，即便家，正是想要离开的地方。",
   ],
   limbo: [
     "Playdead",
-    "A small silhouette at the edge of the unknown. A dark, delicate story told in light and shadow.",
+    "未知边缘，一道小小的剪影。在光与影之间，走过一段幽暗而细腻的旅程。",
   ],
   littlenightmares: [
     "Tarsier Studios",
-    "A small figure in an oversized world. Find your way through the strange places where childhood fears grow.",
+    "庞大世界里，一个小小的身影。穿过那些被童年恐惧悄悄放大的角落，寻找出口。",
   ],
+};
+const gameNames: Record<string, [string, string]> = {
+  bloodborne: ["血源诅咒", "敬畏古老之血。"],
+  sekiro: ["只狼：影逝二度", "犹豫，就会败北。"],
+  tlou2: ["最后生还者 第二部", "每一条路，都有代价。"],
+  rdr2: ["荒野大镖客：救赎 2", "与荒野同行。"],
+  godofwar: ["战神", "远行，也是新的开始。"],
+  uncharted4: ["神秘海域 4", "再赴一场冒险。"],
+  nier: ["尼尔：机械纪元", "愿荣光归于人类。"],
+  monsterhunter: ["怪物猎人：世界", "走进新大陆。"],
+  hollowknight: ["空洞骑士", "向圣巢深处去。"],
+  inside: ["深入", "别停下。"],
+  journey: ["风之旅人", "远山，在等你。"],
+  abzu: ["智慧之海", "深海自有天地。"],
+  titanfall2: ["泰坦陨落 2", "协议三：保护铁驭。"],
+  nioh2: ["仁王 2", "与妖同行，与己较量。"],
+  gta5: ["侠盗猎车手 V", "洛圣都，日光正盛。"],
+  evilwithin: ["恶灵附身", "在噩梦中，守住生机。"],
+  deadcells: ["死亡细胞", "倒下，重来，再向前。"],
+  hades: ["哈迪斯", "终有一次，走出冥府。"],
+  limbo: ["地狱边境", "穿过黑白，寻找答案。"],
+  littlenightmares: ["小小梦魇", "直面童年的暗影。"],
 };
 export const games: Game[] = seedGames.map((g, i) => {
   const year = 2022 + (i % 4);
@@ -453,6 +476,9 @@ export const games: Game[] = seedGames.map((g, i) => {
     g.id === "journey" ? img("photo-1469474968028-56623f02e42e") : g.hero;
   return {
     ...g,
+    originalTitle: g.title,
+    title: gameNames[g.id][0],
+    kicker: gameNames[g.id][1],
     hero: art,
     cover: art,
     platform:
@@ -464,7 +490,7 @@ export const games: Game[] = seedGames.map((g, i) => {
       g.id === "journey" || g.id === "hollowknight" ? "Playing" : g.status,
     notes:
       g.id === "journey"
-        ? "Met a stranger in the snow. Neither of us said a word. Somehow, that was enough."
+        ? "在雪里遇见一位陌生旅人。一路无言，却像彼此认识了很久。"
         : "",
     collections: [
       g.platform === "Indie"

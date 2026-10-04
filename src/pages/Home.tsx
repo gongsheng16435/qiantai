@@ -1,3 +1,4 @@
+import { genreLabel } from "../lib/labels";
 import { useRef, useState } from "react";
 import {
   AnimatePresence,
@@ -36,9 +37,9 @@ export default function Home({
     (id) => games.find((g) => g.id === id)!,
   );
   const headlines: Record<string, [string, string]> = {
-    journey: ["A world away.", "Still with you."],
-    rdr2: ["The last light.", "A lasting story."],
-    hollowknight: ["A little courage.", "A deeper world."],
+    journey: ["去过的远方，", "仍在心上。"],
+    rdr2: ["荒野日暮，", "故事未远。"],
+    hollowknight: ["携一点微光，", "赴深处回响。"],
   };
   return (
     <>
@@ -67,8 +68,7 @@ export default function Home({
           style={{ opacity: reduce ? 1 : opacity }}
         >
           <p className="eyebrow light">
-            <span className="live-dot" /> A PERSONAL COLLECTION OF EXTRAORDINARY
-            WORLDS
+            <span className="live-dot" /> 把热爱走成风景，把回忆收进此处
           </p>
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
@@ -86,13 +86,13 @@ export default function Home({
               <div className="hero-game-line">
                 <span>{game.title}</span>
                 <i />
-                {game.genre}
+                {genreLabel(game.genre)}
                 <i />
                 {game.year}
               </div>
               <p className="hero-description">{game.description}</p>
               <a className="button ivory" href={`#/game/${game.id}`}>
-                Explore this world <ArrowRight size={17} />
+                走进这个世界 <ArrowRight size={17} />
               </a>
             </motion.div>
           </AnimatePresence>
@@ -103,12 +103,12 @@ export default function Home({
               <ArrowDown size={17} />
             </span>
             <span>
-              YOUR NEXT CHAPTER
+              下一段故事
               <br />
-              <strong>Already here.</strong>
+              <strong>等你启程。</strong>
             </span>
           </a>
-          <div className="feature-selector" aria-label="Featured worlds">
+          <div className="feature-selector" aria-label="精选游戏">
             {featuredGames.map((g, i) => (
               <button
                 key={g.id}
@@ -120,10 +120,10 @@ export default function Home({
                 <div>
                   <small>
                     {i === 0
-                      ? "FIND YOUR WONDER"
+                      ? "与微光相逢"
                       : i === 1
-                        ? "TAKE THE LONG WAY"
-                        : "INTO THE UNKNOWN"}
+                        ? "慢行于旷野"
+                        : "向幽深处去"}
                   </small>
                   <strong>{g.title}</strong>
                 </div>
@@ -132,29 +132,29 @@ export default function Home({
             ))}
           </div>
         </div>
-        <span className="hero-side-label">VOL. 01 — WORLDS WORTH KEEPING</span>
+        <span className="hero-side-label">卷一 · 那些值得珍藏的世界</span>
       </section>
       <div className="archive-strip shell">
         <span>
-          <span className="live-dot" /> YOUR WORLD, AT A GLANCE
+          <span className="live-dot" /> 你的世界，一眼回望
         </span>
         <div>
-          <strong>{games.length}</strong> worlds collected <i />
+          <strong>{games.length}</strong> 款珍藏游戏 <i />
           <strong>
             {games.filter((g) => g.status === "Completed").length}
           </strong>{" "}
-          stories finished <i />
+          段已通关的故事 <i />
           <strong>
-            {games.reduce((s, g) => s + g.playtime, 0).toLocaleString()}
+            {games.reduce((s, g) => s + g.playtime, 0).toLocaleString("zh-CN")}
           </strong>{" "}
-          hours well spent
+          小时游玩时光
         </div>
         <Sparkles size={17} />
       </div>
       <div className="home-light">
         <Rail
-          title="Pick up where you left off."
-          eyebrow="THE STORY CONTINUES"
+          title="故事，待你续写。"
+          eyebrow="最近游玩"
           games={[...games]
             .sort(
               (a, b) =>
@@ -168,10 +168,10 @@ export default function Home({
         <section className="collections-section shell">
           <Reveal className="section-heading">
             <div>
-              <p className="eyebrow">CURATED BY FEELING</p>
-              <h2>A mood. A whole new world.</h2>
+              <p className="eyebrow">循着心绪，整理热爱</p>
+              <h2>随心，启程。</h2>
             </div>
-            <span className="small-note">Follow your curiosity.</span>
+            <span className="small-note">让好奇心带路。</span>
           </Reveal>
           <div className="collection-grid">
             <a
@@ -180,13 +180,13 @@ export default function Home({
             >
               <Artwork src={games.find((g) => g.id === "uncharted4")!.hero} />
               <div className="collection-shade" />
-              <span className="collection-index">COLLECTION / 01</span>
+              <span className="collection-index">主题合集 / 01</span>
               <div>
-                <p className="eyebrow light">LEAVE THE EVERYDAY BEHIND</p>
+                <p className="eyebrow light">暂别日常，走向辽阔</p>
                 <h3>
-                  The great
+                  山海
                   <br />
-                  <em>escape.</em>
+                  <em>之外。</em>
                 </h3>
                 <span className="collection-link">
                   {
@@ -194,7 +194,7 @@ export default function Home({
                       g.collections.includes("The great escape"),
                     ).length
                   }{" "}
-                  worlds to get lost in <ArrowRight size={19} />
+                  个值得远行的世界 <ArrowRight size={19} />
                 </span>
               </div>
             </a>
@@ -204,24 +204,24 @@ export default function Home({
             >
               <Artwork src={games.find((g) => g.id === "hollowknight")!.hero} />
               <div className="collection-shade" />
-              <span className="collection-index">COLLECTION / 02</span>
+              <span className="collection-index">主题合集 / 02</span>
               <div>
-                <p className="eyebrow light">MADE WITH A LITTLE MORE HEART</p>
+                <p className="eyebrow light">小小篇幅，也有真切心意</p>
                 <h3>
-                  Small worlds.
+                  小小世界，
                   <br />
-                  <em>Big feelings.</em>
+                  <em>万千心绪。</em>
                 </h3>
                 <span className="collection-link">
-                  Independent by nature <ArrowRight size={19} />
+                  独立之作，自有回响 <ArrowRight size={19} />
                 </span>
               </div>
             </a>
           </div>
         </section>
         <Rail
-          title="Some things stay with you."
-          eyebrow="CLOSE TO THE HEART"
+          title="念念不忘的世界。"
+          eyebrow="我的收藏"
           games={games.filter((g) => g.favorite)}
           onFavorite={onFavorite}
           link="/library?favorites=true"
@@ -235,48 +235,46 @@ export default function Home({
           className="manifesto-copy shell"
           style={{ y: reduce ? 0 : statementY }}
         >
-          <p className="eyebrow light">MORE THAN A LIBRARY</p>
+          <p className="eyebrow light">一座游戏库，也是一段来路</p>
           <h2>
-            Not just games.
+            那些游戏，
             <br />
-            Places you’ve been.
+            是走过的远方，
             <br />
-            <em>Pieces of you.</em>
+            <em>也是自己的一部分。</em>
           </h2>
           <p>
-            The impossible victories. The quiet discoveries.
+            记得那场险胜，也记得一次无声的发现。
             <br />
-            The worlds you never quite left behind.
+            有些世界，离开以后仍会想念。
             <br />
-            Every game has a story. This one is yours.
+            每一段旅程，都留下了你的故事。
           </p>
           <a className="text-link" href="#/timeline">
-            Revisit your journey <ArrowRight size={18} />
+            回看我的旅程 <ArrowRight size={18} />
           </a>
         </motion.div>
-        <span className="manifesto-foot">
-          COLLECT EXPERIENCES. KEEP THE FEELING.
-        </span>
+        <span className="manifesto-foot">收藏走过的路，留住心里的光。</span>
       </section>
       <section className="home-ending shell">
         <Reveal>
-          <p className="eyebrow">MAKE ROOM FOR WONDER</p>
+          <p className="eyebrow">给热爱，一点时间</p>
           <h2>
-            Your time.
+            时光有去处，
             <br />
-            <em>Beautifully spent.</em>
+            <em>热爱有回声。</em>
           </h2>
         </Reveal>
         <div>
           <p>
-            A quieter space for the games you love.
+            给喜欢的游戏，一处安静的角落。
             <br />
-            No noise. No next big thing.
+            暂别喧闹，也不必追赶。
             <br />
-            Just your own little universe.
+            在自己的小小宇宙里，慢慢探索。
           </p>
           <a className="button dark" href="#/tv">
-            <Play size={15} fill="currentColor" /> Enter TV mode{" "}
+            <Play size={15} fill="currentColor" /> 进入大屏模式{" "}
             <ArrowRight size={17} />
           </a>
         </div>

@@ -1,3 +1,4 @@
+import { gameSearchText, genreLabel, platformLabel } from "../lib/labels";
 import { useEffect, useRef, useState } from "react";
 import { ArrowUpRight, Search as SearchIcon } from "lucide-react";
 import type { Game } from "../data/games";
@@ -14,11 +15,7 @@ export default function Search({
     [active, setActive] = useState(0),
     ref = useRef<HTMLDivElement>(null);
   const results = games
-    .filter((g) =>
-      `${g.title} ${g.genre} ${g.studio} ${g.collections.join(" ")}`
-        .toLowerCase()
-        .includes(query.toLowerCase()),
-    )
+    .filter((g) => gameSearchText(g).includes(query.toLowerCase()))
     .slice(0, 8);
   useEffect(() => {
     ref.current
@@ -30,17 +27,13 @@ export default function Search({
     go(`/game/${id}`);
   };
   return (
-    <Modal
-      title="Search your worlds"
-      onClose={onClose}
-      className="search-modal"
-    >
+    <Modal title="搜索游戏" onClose={onClose} className="search-modal">
       <div className="command-input">
         <SearchIcon size={22} />
         <input
           data-autofocus
-          placeholder="Find your next world…"
-          aria-label="Search all games"
+          placeholder="下一站，想去哪里？"
+          aria-label="搜索全部游戏"
           role="combobox"
           aria-controls="search-results"
           aria-expanded="true"
@@ -70,14 +63,14 @@ export default function Search({
         />
       </div>
       <p className="eyebrow">
-        {query ? `${results.length} WORLDS FOUND` : "SOMEWHERE TO BEGIN"}
+        {query ? `找到 ${results.length} 款游戏` : "从这里启程"}
       </p>
       <div
         ref={ref}
         className="search-results"
         id="search-results"
         role="listbox"
-        aria-label="Games"
+        aria-label="游戏搜索结果"
       >
         {results.length ? (
           results.map((g, i) => (
@@ -94,7 +87,7 @@ export default function Search({
               <div>
                 <strong>{g.title}</strong>
                 <span>
-                  {g.genre} · {g.platform}
+                  {genreLabel(g.genre)} · {platformLabel(g.platform)}
                 </span>
               </div>
               <ArrowUpRight size={18} />
@@ -102,18 +95,18 @@ export default function Search({
           ))
         ) : (
           <div className="search-empty">
-            <h3>No worlds found.</h3>
-            <p>Try a title, genre, studio, or collection.</p>
+            <h3>还没有找到这个世界。</h3>
+            <p>试试中文名、英文原名、类型、工作室或合集。</p>
           </div>
         )}
       </div>
       <div className="command-footer">
         <span>
           <kbd>↑</kbd>
-          <kbd>↓</kbd> to explore <kbd>↵</kbd> to open
+          <kbd>↓</kbd> 选择 <kbd>↵</kbd> 打开
         </span>
         <span>
-          <kbd>esc</kbd> to close
+          <kbd>esc</kbd> 关闭
         </span>
       </div>
     </Modal>

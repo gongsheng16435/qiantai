@@ -1,3 +1,4 @@
+import { genreLabel, platformLabel, statusLabel } from "../lib/labels";
 import {
   useEffect,
   useRef,
@@ -87,7 +88,7 @@ export function Favorite({
     <button
       className={`favorite ${game.favorite ? "is-favorite" : ""}`}
       onClick={onToggle}
-      aria-label={`${game.favorite ? "Remove" : "Add"} ${game.title} ${game.favorite ? "from" : "to"} favorites`}
+      aria-label={`${game.favorite ? "取消收藏" : "收藏"}《${game.title}》`}
       aria-pressed={game.favorite}
     >
       <Heart size={17} fill={game.favorite ? "currentColor" : "none"} />
@@ -111,16 +112,22 @@ export function GameCard({
       <a
         href={`#/game/${game.id}`}
         className="cover-link"
-        aria-label={`Open ${game.title}`}
+        aria-label={`查看《${game.title}》`}
       >
         <Artwork src={game.cover} />
         <div className="cover-shade" />
         <span className="cover-edition">
-          LUMEN ARCHIVE <span>{String(index + 1).padStart(2, "0")}</span>
+          LUMEN 私藏 <span>{String(index + 1).padStart(2, "0")}</span>
         </span>
         <div className={`cover-type cover-${game.id}`}>
           <span>{game.studio}</span>
-          <strong>{game.title}</strong>
+          <strong>
+            {game.title.split("：").map((part, i) => (
+              <span className="cover-title-line" key={i}>
+                {part}
+              </span>
+            ))}
+          </strong>
           <i>{game.kicker}</i>
         </div>
         <span className="cover-open">
@@ -132,12 +139,12 @@ export function GameCard({
         <div>
           <h3>{game.title}</h3>
           <span>
-            {game.platform} <i>·</i> {game.genre}
+            {platformLabel(game.platform)} <i>·</i> {genreLabel(game.genre)}
           </span>
         </div>
         <small className={game.status === "Playing" ? "playing" : ""}>
           {game.status === "Playing" && <b />}
-          {game.status}
+          {statusLabel(game.status)}
         </small>
       </a>
     </article>
@@ -197,11 +204,11 @@ export function Rail({
         </div>
         <div className="rail-actions">
           <a className="text-link" href={`#${link}`}>
-            View all <ArrowRight size={16} />
+            查看全部 <ArrowRight size={16} />
           </a>
           <div className="arrow-controls">
             <button
-              aria-label={`Scroll ${title} left`}
+              aria-label={`向左浏览：${title}`}
               onClick={() =>
                 ref.current?.scrollBy({ left: -600, behavior: "smooth" })
               }
@@ -209,7 +216,7 @@ export function Rail({
               <ArrowLeft size={17} />
             </button>
             <button
-              aria-label={`Scroll ${title} right`}
+              aria-label={`向右浏览：${title}`}
               onClick={() =>
                 ref.current?.scrollBy({ left: 600, behavior: "smooth" })
               }
@@ -231,7 +238,7 @@ export function Rail({
           ))
         ) : (
           <div className="rail-empty">
-            A place for your favorites. Tap a heart to keep a world close.
+            这里留给你的偏爱。点亮爱心，收藏念念不忘的世界。
           </div>
         )}
       </div>
@@ -309,7 +316,7 @@ export function Modal({
         <button
           className="modal-close icon-button"
           onClick={onClose}
-          aria-label="Close dialog"
+          aria-label="关闭弹窗"
         >
           <X size={21} />
         </button>
@@ -322,17 +329,17 @@ export function Empty({ clear }: { clear: () => void }) {
   return (
     <div className="empty-state">
       <Mark />
-      <h2>A world waiting to be found.</h2>
-      <p>No games match these filters. Try a different combination.</p>
+      <h2>换个方向，也许就能遇见。</h2>
+      <p>没有符合条件的游戏，试试其他关键词或筛选条件。</p>
       <button className="button dark" onClick={clear}>
-        Clear filters <ArrowRight size={16} />
+        清除筛选 <ArrowRight size={16} />
       </button>
     </div>
   );
 }
 export function Back({
   to = "/library",
-  label = "The library",
+  label = "返回游戏库",
 }: {
   to?: string;
   label?: string;

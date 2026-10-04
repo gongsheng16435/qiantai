@@ -3264,3 +3264,513 @@ h2 {
     display: none;
   }
 }
+
+/* Chinese typography: upright Song-style accents, readable labels, calmer spacing. */
+:root {
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+    "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+  --serif-zh: "Songti SC", "STSong", "Noto Serif CJK SC", "SimSun", serif;
+}
+h1,
+h2,
+h3 {
+  letter-spacing: -0.025em;
+}
+h1 em,
+h2 em,
+h3 em {
+  font-family: var(--serif-zh);
+  font-style: normal;
+  letter-spacing: 0.01em;
+}
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.16em;
+}
+.site-header nav a {
+  font-size: 13px;
+}
+.tv-trigger {
+  font-size: 12px;
+}
+.hero-story h1 {
+  font-size: clamp(66px, 6.7vw, 110px);
+  line-height: 1.25;
+  letter-spacing: -0.035em;
+}
+.hero-story h1 em {
+  letter-spacing: 0.005em;
+}
+.hero-story .eyebrow {
+  font-size: 10px;
+}
+.hero-description {
+  font-size: 14px;
+  line-height: 1.9;
+  max-width: 360px;
+}
+.hero-game-line,
+.hero-story .button {
+  font-size: 12px;
+}
+.feature-selector small {
+  font-size: 9px;
+  letter-spacing: 0.12em;
+}
+.feature-selector strong {
+  font-size: 13px;
+}
+.hero-side-label,
+.hero-discover {
+  font-size: 9px;
+}
+.archive-strip,
+.archive-strip > span {
+  font-size: 11px;
+}
+.section-heading h2 {
+  line-height: 1.3;
+}
+.cover-type strong {
+  font-family: var(--serif-zh);
+  font-weight: 500;
+  letter-spacing: 0.025em;
+  line-height: 1.35;
+}
+.cover-type i {
+  font-size: 10px;
+  line-height: 1.7;
+}
+.cover-journey strong {
+  letter-spacing: 0.12em;
+}
+.cover-edition {
+  font-size: 8px;
+}
+.card-caption h3 {
+  font-size: 14px;
+  line-height: 1.6;
+}
+.card-caption div > span,
+.card-caption small {
+  font-size: 11px;
+}
+.collection-feature h3 {
+  font-size: 58px;
+  line-height: 1.25;
+}
+.collection-link,
+.collection-index,
+.collection-feature .eyebrow {
+  font-size: 11px;
+}
+.manifesto-copy h2 {
+  font-size: clamp(38px, 4.8vw, 76px);
+  line-height: 1.45;
+}
+.manifesto-copy > p:not(.eyebrow),
+.home-ending > div > p:not(.eyebrow) {
+  font-size: 14px;
+  line-height: 2;
+}
+.manifesto-foot {
+  font-size: 10px;
+}
+.home-ending h2 {
+  font-size: clamp(40px, 4.7vw, 70px);
+  line-height: 1.4;
+}
+.page-heading h1 {
+  font-size: clamp(52px, 5.8vw, 88px);
+  line-height: 1.35;
+  letter-spacing: -0.03em;
+}
+.page-heading > p {
+  font-size: 13px;
+  line-height: 2;
+}
+.page-heading {
+  gap: 32px;
+}
+.library-tabs > button,
+.search-field input,
+.filter-toggle {
+  font-size: 12px;
+}
+.filter-panel > label,
+.filter-panel select,
+.library-results,
+.sort-label select {
+  font-size: 12px;
+}
+.library-colophon {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+.detail-content h1 {
+  font-size: clamp(50px, 6.5vw, 96px);
+  line-height: 1.3;
+  letter-spacing: -0.025em;
+}
+.detail-kicker,
+.detail-journal blockquote {
+  font-family: var(--serif-zh);
+  font-style: normal;
+}
+.detail-intro h2,
+.detail-journal h2 {
+  line-height: 1.4;
+}
+.detail-tags,
+.detail-actions .button,
+.detail-dates dl > div,
+.collection-tags a {
+  font-size: 12px;
+}
+.detail-art-label,
+.personal-metrics dt,
+.journal-caption,
+.small-note {
+  font-size: 10px;
+}
+.timeline-date {
+  width: 62px;
+  white-space: nowrap;
+}
+.chapter-description {
+  line-height: 2;
+}
+.chapter-year > span,
+.timeline-intro,
+.timeline-entries p {
+  font-size: 11px;
+}
+.timeline-entries h4 {
+  font-size: 14px;
+}
+.timeline-date {
+  font-size: 11px;
+}
+.timeline-end h2,
+.stats-breakdown h2,
+.stats-charts h2 {
+  line-height: 1.4;
+}
+.stats-breakdown h2 {
+  font-size: 38px;
+}
+.stats-charts h2 {
+  font-size: 31px;
+}
+.genre-bars > div > div:first-child,
+.chart-description,
+.stats-summary span {
+  font-size: 12px;
+}
+.hours-number > span {
+  font-size: 22px;
+  line-height: 1.6;
+}
+.stats-headline > p,
+.stats-feature p:not(.eyebrow) {
+  font-size: 13px;
+}
+.stats-feature h2 {
+  line-height: 1.3;
+}
+.modal h2 {
+  font-size: 32px;
+  line-height: 1.4;
+}
+.modal .eyebrow,
+.edit-modal label,
+.command-footer {
+  font-size: 11px;
+}
+.edit-modal input,
+.edit-modal textarea,
+.edit-modal select {
+  font-size: 13px;
+}
+.search-result span {
+  font-size: 11px;
+}
+.tv-description h1 {
+  font-size: clamp(48px, 6vw, 88px);
+  line-height: 1.3;
+}
+.tv-description > p:not(.eyebrow) {
+  font-family: var(--serif-zh);
+  font-style: normal;
+}
+.tv-meta,
+.tv-footer {
+  font-size: 12px;
+}
+.tv-footer > span:last-child,
+.tv-header .brand span {
+  font-size: 10px;
+}
+.site-footer span,
+.site-footer a:not(.brand) {
+  font-size: 12px;
+}
+.footer-fine span {
+  font-size: 10px;
+}
+@media (max-width: 1100px) {
+  .collection-feature h3 {
+    font-size: 47px;
+  }
+  .page-heading {
+    align-items: flex-start;
+  }
+  .page-heading > p {
+    max-width: 250px;
+  }
+}
+@media (max-width: 760px) {
+  .hero-story {
+    padding-top: 175px;
+  }
+  .hero-story h1 {
+    font-size: clamp(38px, 10.3vw, 60px);
+    line-height: 1.38;
+    letter-spacing: -0.03em;
+  }
+  .hero-story h1 em {
+    letter-spacing: 0;
+  }
+  .hero-story .eyebrow {
+    font-size: 9px;
+    letter-spacing: 0.12em;
+  }
+  .hero-description {
+    font-size: 13px;
+    max-width: 280px;
+  }
+  .hero-game-line,
+  .hero-story .button {
+    font-size: 11px;
+  }
+  .feature-selector small {
+    font-size: 9px;
+  }
+  .feature-selector strong {
+    font-size: 11px;
+  }
+  .archive-strip > span {
+    font-size: 10px;
+  }
+  .archive-strip > div {
+    font-size: 10px;
+  }
+  .archive-strip i {
+    margin-inline: 5px;
+  }
+  .section-heading .eyebrow,
+  .collection-feature .eyebrow,
+  .collection-index {
+    font-size: 10px;
+  }
+  .rail-section .section-heading h2,
+  .collections-section h2 {
+    font-size: 27px;
+    line-height: 1.45;
+  }
+  .rail-actions .text-link {
+    font-size: 11px;
+  }
+  .cover-type i {
+    font-size: 9px;
+  }
+  .cover-edition {
+    font-size: 7px;
+  }
+  .card-caption h3,
+  .library-grid .card-caption h3 {
+    font-size: 13px;
+  }
+  .card-caption div > span,
+  .library-grid .card-caption div > span {
+    font-size: 10px;
+  }
+  .collection-feature h3 {
+    font-size: 47px;
+  }
+  .collection-link {
+    font-size: 11px;
+  }
+  .manifesto-copy h2 {
+    font-size: clamp(28px, 7.6vw, 45px);
+    line-height: 1.55;
+  }
+  .manifesto-copy > p:not(.eyebrow),
+  .home-ending > div > p:not(.eyebrow) {
+    font-size: 13px;
+    line-height: 2;
+  }
+  .manifesto-copy .eyebrow,
+  .home-ending .eyebrow {
+    font-size: 10px;
+  }
+  .manifesto-foot {
+    font-size: 9px;
+  }
+  .home-ending h2 {
+    font-size: 36px;
+    line-height: 1.55;
+  }
+  .page-heading .eyebrow {
+    font-size: 10px;
+  }
+  .page-heading h1 {
+    font-size: clamp(34px, 9.8vw, 52px);
+    line-height: 1.45;
+  }
+  .page-heading > p {
+    font-size: 12px;
+    max-width: none;
+  }
+  .library-tabs > button,
+  .search-field input,
+  .filter-toggle {
+    font-size: 12px;
+  }
+  .filter-panel > label,
+  .filter-panel select,
+  .sort-label select {
+    font-size: 11px;
+  }
+  .library-results {
+    font-size: 10px;
+  }
+  .sort-label select {
+    max-width: 140px;
+  }
+  .library-colophon {
+    font-size: 9px;
+  }
+  .detail-content h1 {
+    font-size: 40px;
+    line-height: 1.4;
+  }
+  .detail-kicker {
+    font-size: 21px;
+  }
+  .detail-intro h2 {
+    font-size: 29px;
+  }
+  .detail-intro .eyebrow,
+  .detail-content > .eyebrow,
+  .personal-metrics dt,
+  .detail-dates .eyebrow {
+    font-size: 10px;
+  }
+  .detail-actions .button,
+  .detail-tags {
+    font-size: 11px;
+  }
+  .detail-journal blockquote {
+    font-size: 23px;
+    line-height: 1.85;
+  }
+  .detail-journal h2 {
+    font-size: 27px;
+  }
+  .gallery-section .small-note {
+    font-size: 10px;
+  }
+  .timeline-intro,
+  .chapter-year > span {
+    font-size: 9px;
+  }
+  .chapter-content h3 {
+    font-size: 25px;
+    line-height: 1.5;
+  }
+  .chapter-description {
+    font-size: 13px;
+  }
+  .timeline-entries h4 {
+    font-size: 12px;
+  }
+  .timeline-date {
+    width: 55px;
+    font-size: 10px;
+  }
+  .timeline-entries p {
+    font-size: 10px;
+  }
+  .timeline-end h2 {
+    font-size: 39px;
+  }
+  .hours-number > span {
+    font-size: 18px;
+  }
+  .stats-headline > p {
+    font-size: 12px;
+  }
+  .stats-summary span,
+  .stats-breakdown .eyebrow,
+  .stats-charts .eyebrow {
+    font-size: 11px;
+  }
+  .stats-feature h2 {
+    font-size: 36px;
+  }
+  .stats-feature .eyebrow {
+    font-size: 10px;
+  }
+  .stats-breakdown h2 {
+    font-size: 32px;
+  }
+  .stats-charts h2 {
+    font-size: 28px;
+  }
+  .modal h2 {
+    font-size: 27px;
+  }
+  .edit-modal label,
+  .edit-modal label > span,
+  .command-footer {
+    font-size: 10px;
+  }
+  .tv-description h1 {
+    font-size: 40px;
+    line-height: 1.4;
+  }
+  .tv-description .eyebrow {
+    font-size: 10px;
+  }
+  .tv-footer {
+    font-size: 10px;
+  }
+  .tv-footer > span:last-child {
+    font-size: 9px;
+  }
+  .site-footer > .shell > span {
+    font-size: 12px;
+  }
+  .site-footer .footer-fine span {
+    font-size: 9px;
+  }
+}
+@media (max-height: 700px) {
+  .tv-description h1 {
+    font-size: clamp(28px, 4vw, 50px);
+    line-height: 1.2;
+  }
+}
+.cover-title-line {
+  display: block;
+}
+.hours-number {
+  font-family: Arial, "Helvetica Neue", sans-serif;
+}
+.hours-number > span {
+  font-family:
+    -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei",
+    "Noto Sans CJK SC", sans-serif;
+}

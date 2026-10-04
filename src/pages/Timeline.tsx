@@ -1,3 +1,4 @@
+import { statusLabel } from "../lib/labels";
 import { useRef } from "react";
 import {
   useScroll,
@@ -26,19 +27,19 @@ function Chapter({
     });
   const y = useTransform(scrollYProgress, [0, 1], [-35, 35]);
   const titles = [
-    "The worlds we return to.",
-    "A little further from ordinary.",
-    "The beautiful detours.",
-    "Where it all began.",
+    "总有一些世界，值得重返。",
+    "走远一点，遇见不一样的自己。",
+    "那些绕过的路，也有风景。",
+    "一切，从这里开始。",
   ];
   return (
     <section ref={ref} className="timeline-chapter shell">
       <div className="chapter-year">
-        <span>CHAPTER {String(index + 1).padStart(2, "0")}</span>
+        <span>篇章 {String(index + 1).padStart(2, "0")}</span>
         <h2>{year}</h2>
         <p>
-          {games.length} worlds · {games.reduce((s, g) => s + g.playtime, 0)}{" "}
-          hours
+          {games.length} 款游戏 · {games.reduce((s, g) => s + g.playtime, 0)}{" "}
+          小时
         </p>
       </div>
       <div className="chapter-content">
@@ -62,12 +63,12 @@ function Chapter({
           {games.map((g) => (
             <a key={g.id} href={`#/game/${g.id}`}>
               <span className="timeline-date">
-                {displayDate(g.firstPlayedAt).replace(`, ${year}`, "")}
+                {displayDate(g.firstPlayedAt, false)}
               </span>
               <div>
                 <h4>{g.title}</h4>
                 <p>
-                  {g.status} · {g.playtime} hours
+                  {statusLabel(g.status)} · {g.playtime} 小时
                 </p>
               </div>
               <span className="timeline-score">
@@ -97,26 +98,26 @@ export default function Timeline({ games }: { games: Game[] }) {
     <div className="timeline-page">
       <header className="page-heading shell">
         <Reveal>
-          <p className="eyebrow">THE STORY SO FAR</p>
+          <p className="eyebrow">一路走来</p>
           <h1>
-            Time passes.
+            时光向前，
             <br />
-            <em>Worlds remain.</em>
+            <em>回忆仍在。</em>
           </h1>
         </Reveal>
         <p>
-          Not a list of games. A collection of moments.
+          沿着游戏的足迹，拾起散落的片刻。
           <br />
-          Follow the thread of your own adventure.
+          每一次启程，都在写下自己的故事。
         </p>
       </header>
       <div className="timeline-intro shell">
         <span>
           {years.length
             ? `${[...years].reverse()[0]} — ${years[0]}`
-            : "YOUR STORY BEGINS HERE"}
+            : "故事，从此刻开始"}
         </span>
-        <span>A PERSONAL HISTORY OF PLAY</span>
+        <span>我的游玩编年史</span>
       </div>
       {years.map((year, i) => (
         <Chapter
@@ -130,8 +131,8 @@ export default function Timeline({ games }: { games: Game[] }) {
       ))}
       {undated.length > 0 && (
         <section className="undated shell">
-          <p className="eyebrow">STILL TO BE DATED</p>
-          <h2>Every story starts somewhere.</h2>
+          <p className="eyebrow">等待标记的日子</p>
+          <h2>每段故事，都有一个起点。</h2>
           {undated.map((g) => (
             <a key={g.id} href={`#/game/${g.id}`}>
               {g.title}
@@ -143,12 +144,12 @@ export default function Timeline({ games }: { games: Game[] }) {
       <div className="timeline-end shell">
         <span className="live-dot" />
         <h2>
-          The next chapter
+          下一章，
           <br />
-          <em>is yours.</em>
+          <em>由你续写。</em>
         </h2>
         <a href="#/library" className="text-link">
-          Find your next world <ArrowUpRight size={19} />
+          寻找下一站 <ArrowUpRight size={19} />
         </a>
       </div>
     </div>
