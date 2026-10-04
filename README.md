@@ -113,7 +113,7 @@ The workflow in [`.github/workflows/pages.yml`](.github/workflows/pages.yml) ins
 2. Push the finished source to `main`, or run **Deploy LUMEN to GitHub Pages** from Actions after the workflow reaches the default branch.
 3. Wait for the deployment job to succeed. Its `github-pages` environment contains the confirmed deployment URL.
 
-The expected project URL is **https://gongsheng16435.github.io/qiantai/**. This is the deployment target, not a claim that publication has succeeded. Setup-time requests to the GitHub API and this host were blocked by the cloud egress proxy (403); the network requirements have been saved in the cloud configuration draft. Activation and online verification require that access or the repository settings UI. [Deployment status](docs/DEPLOYMENT.md) records the actual result of the cloud run.
+The expected project URL is **https://gongsheng16435.github.io/qiantai/**. This is the deployment target, not a claim that publication has succeeded. The first workflow run reached Pages configuration, then failed because Pages is not yet enabled for the repository. Setup-time requests to the GitHub API and this host were blocked by the cloud egress proxy (403); the network requirements have been saved in the cloud configuration draft. Activation and online verification require that access or the repository settings UI. [Deployment status](docs/DEPLOYMENT.md) records the actual result of the cloud run.
 
 ## Validation performed
 
