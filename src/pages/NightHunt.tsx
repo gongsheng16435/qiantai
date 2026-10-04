@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import {
   ArrowLeft,
   ArrowRight,
+  FlaskConical,
   Maximize,
   Minimize,
   Pause,
@@ -24,6 +25,7 @@ const initial: HuntSnapshot = {
   mode: "playing",
   health: 100,
   stamina: 100,
+  vials: 2,
   bossHealth: 5400,
   bossMaxHealth: 5400,
   posture: 0,
@@ -51,6 +53,9 @@ function Controls({ compact = false }: { compact?: boolean }) {
       </span>
       <span>
         <kbd>E / 右键</kbd> 弹反
+      </span>
+      <span>
+        <kbd>Q</kbd> 血瓶
       </span>
       {!compact && (
         <span>
@@ -329,14 +334,14 @@ export default function NightHunt() {
             className="hunt-canvas"
             tabIndex={0}
             role="application"
-            aria-label="Night Hunt 游戏区域。WASD 移动，鼠标左键挥刃，空格闪避，E 或右键弹反，Escape 暂停。"
+            aria-label="Night Hunt 游戏区域。WASD 移动，鼠标左键挥刃，空格闪避，E 或右键弹反，Q 使用血瓶，Escape 暂停。"
           />
           {!loading && !error && (
             <div className={`hunt-hud ${overlay ? "is-dimmed" : ""}`}>
               <div className="hunt-player-hud">
                 <div className="hunt-hud-label">
                   <span>猎人</span>
-                  <small>{Math.ceil(snapshot.health)} / 100</small>
+                  <small>{Math.round(snapshot.health)} / 100</small>
                 </div>
                 <div
                   className="hunt-meter health"
@@ -359,6 +364,31 @@ export default function NightHunt() {
                   <span style={{ width: `${snapshot.stamina}%` }} />
                 </div>
                 <span className="hunt-stamina-label">精力</span>
+                <button
+                  className="hunt-vials"
+                  aria-label={`使用血瓶，剩余 ${snapshot.vials} 瓶，每瓶恢复三分之一最大生命`}
+                  title="Q · 每瓶恢复三分之一最大生命"
+                  disabled={
+                    snapshot.mode !== "playing" ||
+                    snapshot.vials === 0 ||
+                    snapshot.health >= 100
+                  }
+                  onClick={() => controller.current?.input("heal")}
+                >
+                  <span className="hunt-vial-icons" aria-hidden="true">
+                    {[0, 1].map((index) => (
+                      <FlaskConical
+                        key={index}
+                        size={16}
+                        className={
+                          index < snapshot.vials ? "is-filled" : "is-empty"
+                        }
+                      />
+                    ))}
+                  </span>
+                  <span>血瓶 {snapshot.vials}/2</span>
+                  <kbd>Q</kbd>
+                </button>
               </div>
               <div className="hunt-time">
                 <span>{clock(snapshot.elapsed)}</span>
@@ -502,6 +532,10 @@ export default function NightHunt() {
                     </span>
                     <span>
                       <b>弹反</b>白光落下前按 E，击破架势后追击。
+                    </span>
+                    <span>
+                      <b>血瓶</b>按 Q
+                      或点生命条下的血瓶，每局两瓶，各恢复三分之一生命。
                     </span>
                   </div>
                   <button

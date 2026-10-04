@@ -1,11 +1,12 @@
 export const ARENA = {
-  width: 1280,
-  height: 720,
-  left: 100,
-  right: 1180,
-  top: 380,
-  bottom: 640,
+  width: 1600,
+  height: 900,
+  left: 70,
+  right: 1530,
+  top: 470,
+  bottom: 810,
 };
+export type HuntAction = "attack" | "dodge" | "parry" | "heal";
 export type HuntMode = "playing" | "paused" | "dead" | "victory";
 export type HuntCue =
   | "slash"
@@ -14,6 +15,7 @@ export type HuntCue =
   | "perfect"
   | "parry"
   | "hurt"
+  | "heal"
   | "windup"
   | "slam"
   | "phase"
@@ -23,6 +25,7 @@ export interface HuntSnapshot {
   mode: HuntMode;
   health: number;
   stamina: number;
+  vials: number;
   bossHealth: number;
   bossMaxHealth: number;
   posture: number;
@@ -88,6 +91,6 @@ export interface HuntController {
   restart: () => void;
   setMuted: (muted: boolean) => void;
   destroy: () => void;
-  input: (action: "attack" | "dodge" | "parry", pressed?: boolean) => void;
+  input: (action: HuntAction, pressed?: boolean) => void;
   move: (x: number, y: number) => void;
 }

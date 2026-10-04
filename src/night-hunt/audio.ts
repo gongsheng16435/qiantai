@@ -114,6 +114,11 @@ export class HuntAudio {
         this.tone(now, 0.31, 92, 31, 0.2, "sine");
         this.noise(now, 0.2, 0.14, 700, 190, "lowpass");
         break;
+      case "heal":
+        this.noise(now, 0.3, 0.04, 280, 1200, "bandpass");
+        this.bell(now, 440, 0.035, 0.8, this.effects!);
+        this.bell(now + 0.13, 659.25, 0.03, 0.9, this.effects!);
+        break;
       case "windup":
         this.tone(now, 0.48, 48, 104, 0.064, "triangle", this.effects!, 0.16);
         this.noise(now, 0.34, 0.047, 480, 1800, "bandpass");

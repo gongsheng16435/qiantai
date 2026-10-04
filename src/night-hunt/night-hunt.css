@@ -287,6 +287,52 @@
   font-size: 8px;
   letter-spacing: 0.14em;
 }
+.hunt-vials {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  pointer-events: auto;
+  padding: 8px 0;
+  margin-top: 4px;
+  color: #c6b9a6;
+  font-size: 10px;
+  letter-spacing: 0.05em;
+}
+.hunt-vials:disabled {
+  cursor: default;
+}
+.hunt-vials:enabled:hover {
+  color: #efe0ce;
+}
+.hunt-vial-icons {
+  display: flex;
+  gap: 3px;
+}
+.hunt-vial-icons .is-filled {
+  color: #c99176;
+  fill: #804e3b66;
+}
+.hunt-vial-icons .is-empty {
+  color: #687061;
+  opacity: 0.6;
+}
+.hunt-vials kbd {
+  margin-left: 3px;
+  border: 1px solid #a7ad962e;
+  padding: 1px 4px;
+  color: #9da38d;
+  font-family: inherit;
+  font-size: 9px;
+}
+@media (pointer: coarse) {
+  .hunt-vials {
+    min-height: 44px;
+    gap: 7px;
+  }
+  .hunt-vials kbd {
+    display: none;
+  }
+}
 .hunt-time {
   position: absolute;
   top: 36px;

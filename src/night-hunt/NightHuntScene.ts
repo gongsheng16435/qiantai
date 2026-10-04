@@ -3,6 +3,7 @@ import { HuntAudio } from "./audio";
 import { createHuntRenderer } from "./renderer";
 import {
   ARENA,
+  type HuntAction,
   type BossVisual,
   type FighterVisual,
   type HuntController,
@@ -50,6 +51,7 @@ export class NightHuntScene extends Phaser.Scene {
   private beast!: Fighter & BossVisual;
   private mode: HuntMode = "playing";
   private stamina = 100;
+  private vials = 2;
   private posture = 0;
   private phase: 1 | 2 = 1;
   private phaseIntro = 0;
@@ -87,8 +89,8 @@ export class NightHuntScene extends Phaser.Scene {
   private touchX = 0;
   private touchY = 0;
   private pointerAiming = false;
-  private aimX = 900;
-  private aimY = 520;
+  private aimX = 1100;
+  private aimY = 660;
   private muted: boolean;
   private disposed = false;
 
@@ -110,7 +112,7 @@ export class NightHuntScene extends Phaser.Scene {
     const keyboard = this.input.keyboard;
     if (keyboard) {
       this.keys = keyboard.addKeys(
-        "W,A,S,D,UP,DOWN,LEFT,RIGHT,SPACE,E",
+        "W,A,S,D,UP,DOWN,LEFT,RIGHT,SPACE,E,Q",
       ) as Record<string, Phaser.Input.Keyboard.Key>;
       keyboard.addCapture([
         "W",
@@ -123,12 +125,16 @@ export class NightHuntScene extends Phaser.Scene {
         "RIGHT",
         "SPACE",
         "E",
+        "Q",
       ]);
       keyboard.on("keydown-SPACE", (event: KeyboardEvent) => {
         if (!event.repeat) this.command("dodge");
       });
       keyboard.on("keydown-E", (event: KeyboardEvent) => {
         if (!event.repeat) this.command("parry");
+      });
+      keyboard.on("keydown-Q", (event: KeyboardEvent) => {
+        if (!event.repeat) this.command("heal");
       });
       keyboard.on("keydown", () => {
         void this.soundscape?.start();
@@ -201,8 +207,8 @@ export class NightHuntScene extends Phaser.Scene {
 
   private resetRun() {
     this.hunter = {
-      x: 430,
-      y: 552,
+      x: 535,
+      y: 690,
       facing: 0,
       action: "idle",
       actionTime: 0,
@@ -210,8 +216,8 @@ export class NightHuntScene extends Phaser.Scene {
       health: 100,
     };
     this.beast = {
-      x: 880,
-      y: 510,
+      x: 1100,
+      y: 638,
       facing: Math.PI,
       action: "idle",
       actionTime: 0,
@@ -222,6 +228,7 @@ export class NightHuntScene extends Phaser.Scene {
     };
     this.mode = "playing";
     this.stamina = 100;
+    this.vials = 2;
     this.posture = 0;
     this.phase = 1;
     this.phaseIntro = 0;
@@ -280,9 +287,24 @@ export class NightHuntScene extends Phaser.Scene {
     this.publish();
   }
 
-  private command(action: "attack" | "dodge" | "parry") {
-    if (this.mode !== "playing" || this.phaseIntro > 0) return;
+  private command(action: HuntAction) {
+    if (this.mode !== "playing") return;
     void this.soundscape?.start();
+    if (action === "heal") {
+      if (this.vials === 0) this.say("血瓶已用尽。", 1.2);
+      else if (this.hunter.health >= 100)
+        this.say("生命已满，血瓶留待下一刻。", 1.2);
+      else {
+        this.vials--;
+        this.hunter.health = Math.min(100, this.hunter.health + 100 / 3);
+        this.soundscape?.cue("heal");
+        this.burst(this.hunter.x, this.hunter.y - 35, 20, 0xd6a792, 90);
+        this.say("血瓶 · 余烬回暖。", 1.5);
+      }
+      this.publish();
+      return;
+    }
+    if (this.phaseIntro > 0) return;
     if (action === "attack") {
       this.attackHolding = true;
       this.attackPending = true;
@@ -443,14 +465,14 @@ export class NightHuntScene extends Phaser.Scene {
       else if ((movement.x || movement.y) && hunter.action !== "attack")
         hunter.facing = Math.atan2(movement.y, movement.x);
     }
-    hunter.x = Phaser.Math.Clamp(hunter.x, ARENA.left, ARENA.right);
-    hunter.y = Phaser.Math.Clamp(hunter.y, ARENA.top, ARENA.bottom);
     const separation = distance(hunter, this.beast);
     if (separation < 75 && hunter.action !== "dodge") {
       const angle = angleTo(this.beast, hunter);
       hunter.x += Math.cos(angle) * (75 - separation);
       hunter.y += Math.sin(angle) * (75 - separation) * DEPTH;
     }
+    hunter.x = Phaser.Math.Clamp(hunter.x, ARENA.left, ARENA.right);
+    hunter.y = Phaser.Math.Clamp(hunter.y, ARENA.top, ARENA.bottom);
     if ((this.attackPending || this.attackHolding) && !hunter.actionLeft)
       this.beginSlash();
     if (
@@ -863,6 +885,7 @@ export class NightHuntScene extends Phaser.Scene {
       mode: this.mode,
       health: this.hunter.health,
       stamina: this.stamina,
+      vials: this.vials,
       bossHealth: this.beast.health,
       bossMaxHealth: BOSS_HEALTH,
       posture: this.posture,

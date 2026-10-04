@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { ARENA } from "./types";
 import type {
   FighterVisual,
   HuntVisual,
@@ -1416,14 +1417,20 @@ export function createHuntRenderer(scene: Phaser.Scene) {
     paintWorld(texture.context);
     texture.refresh();
   }
-  const backdrop = scene.add.image(W / 2, H / 2, key).setDepth(0);
-  const eclipse = scene.add.graphics().setDepth(1);
+  const backdrop = scene.add
+    .image(ARENA.width / 2, ARENA.height / 2, key)
+    .setDisplaySize(ARENA.width, ARENA.height)
+    .setDepth(0);
+  const eclipse = scene.add
+    .graphics()
+    .setScale(ARENA.width / W, ARENA.height / H)
+    .setDepth(1);
   const shadows = scene.add.graphics().setDepth(30);
   const marks = scene.add.graphics().setDepth(40);
   const hunter = scene.add.graphics();
   const boss = scene.add.graphics();
-  const atmosphere = scene.add.graphics().setDepth(800);
-  const flashes = scene.add.graphics().setDepth(900);
+  const atmosphere = scene.add.graphics().setDepth(ARENA.height + 200);
+  const flashes = scene.add.graphics().setDepth(ARENA.height + 300);
   let phaseMix = 0,
     lastTime = 0;
   return {
@@ -1492,8 +1499,10 @@ export function createHuntRenderer(scene: Phaser.Scene) {
       atmosphere.clear();
       const t = v.reducedMotion ? 0 : v.time;
       for (let i = 0; i < 46; i++) {
-        const x = (i * 197.13 + t * (3 + (i % 5) * 1.4)) % W,
-          y = (i * 113.47 - t * (1.5 + (i % 4)) + 7200) % H;
+        const x = (i * 197.13 + t * (3 + (i % 5) * 1.4)) % ARENA.width,
+          y =
+            (i * 113.47 - t * (1.5 + (i % 4)) + ARENA.height * 10) %
+            ARENA.height;
         const a = 0.08 + Math.sin(i * 2.7 + t * 0.7) * 0.055;
         atmosphere
           .lineStyle(i % 7 === 0 ? 1.5 : 0.7, CHALK, a)
@@ -1501,8 +1510,10 @@ export function createHuntRenderer(scene: Phaser.Scene) {
       }
       if (phaseMix > 0.05)
         for (let i = 0; i < 23; i++) {
-          const x = (i * 197.6 + Math.sin(t * 0.6 + i) * 17) % W,
-            y = 720 - ((i * 71 + t * (12 + (i % 5) * 4)) % 550);
+          const x = (i * 197.6 + Math.sin(t * 0.6 + i) * 17) % ARENA.width,
+            y =
+              ARENA.height -
+              ((i * 71 + t * (12 + (i % 5) * 4)) % (ARENA.height * 0.76));
           atmosphere
             .lineStyle(0.9, 0xd59c70, (0.18 + (i % 3) * 0.07) * phaseMix)
             .lineBetween(x, y, x + 1, y - 3);
@@ -1525,9 +1536,11 @@ export function createHuntRenderer(scene: Phaser.Scene) {
       if (v.flash > 0.01)
         flashes
           .fillStyle(PAPER, Math.min(0.24, v.flash * 0.22))
-          .fillRect(0, 0, W, H);
+          .fillRect(0, 0, ARENA.width, ARENA.height);
       if (v.slow && !v.reducedMotion) {
-        flashes.lineStyle(0.5, CHALK, 0.1).strokeRect(17, 17, W - 34, H - 34);
+        flashes
+          .lineStyle(0.5, CHALK, 0.1)
+          .strokeRect(17, 17, ARENA.width - 34, ARENA.height - 34);
       }
     },
     destroy() {
