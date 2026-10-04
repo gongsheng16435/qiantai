@@ -243,6 +243,8 @@ export default function NightHunt() {
     else void page.current?.requestFullscreen?.().catch(() => {});
   };
   const start = () => {
+    setLoading(true);
+    setError("");
     setActive(true);
     if (!document.fullscreenElement)
       void page.current?.requestFullscreen?.().catch(() => {});
