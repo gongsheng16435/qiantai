@@ -151,6 +151,28 @@ export default function Home({
         </div>
         <Sparkles size={17} />
       </div>
+      <a
+        className="home-hunt-feature"
+        href="#/night-hunt"
+        aria-label="进入 NIGHT HUNT 夜猎小游戏"
+      >
+        <img
+          src={`${import.meta.env.BASE_URL}night-hunt/cover.svg`}
+          alt="月下的钟庭废墟与巨兽线描"
+          loading="lazy"
+        />
+        <div className="home-hunt-copy">
+          <p>可玩短篇 / LUMEN ORIGINAL</p>
+          <h2>NIGHT HUNT</h2>
+          <span>月落之前，直面长夜。</span>
+          <strong>
+            PLAY <ArrowRight size={21} />
+          </strong>
+        </div>
+        <span className="home-hunt-caption">
+          一位猎人 · 一场交锋 · 五分钟的长夜
+        </span>
+      </a>
       <div className="home-light">
         <Rail
           title="故事，待你续写。"

@@ -22,6 +22,7 @@ const Detail = lazy(() => import("./pages/Detail"));
 const Timeline = lazy(() => import("./pages/Timeline"));
 const Statistics = lazy(() => import("./pages/Statistics"));
 const TV = lazy(() => import("./pages/TV"));
+const NightHunt = lazy(() => import("./pages/NightHunt"));
 export default function App() {
   const { games, update, notice, setNotice } = useArchive(),
     route = useRoute(),
@@ -32,10 +33,13 @@ export default function App() {
     initial = useRef(true);
   const [path, query = ""] = route.split("?"),
     isTV = path === "/tv",
+    isHunt = path === "/night-hunt",
+    isImmersive = isTV || isHunt,
     isDark = path === "/" || path.startsWith("/game/") || path === "/timeline",
     game = games.find((g) => g.id === path.split("/")[2]);
   useEffect(() => {
     const key = (e: KeyboardEvent) => {
+      if (location.hash.startsWith("#/night-hunt")) return;
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
         setSearch((s) => !s);
@@ -50,7 +54,8 @@ export default function App() {
   }, []);
   useEffect(() => {
     setMenu(false);
-    document.title = `${game?.title || ({ "/": "你的世界", "/library": "游戏库", "/timeline": "时间线", "/statistics": "游玩足迹", "/tv": "大屏模式" } as Record<string, string>)[path] || "页面未找到"} — LUMEN`;
+    setSearch(false);
+    document.title = `${game?.title || ({ "/": "你的世界", "/library": "游戏库", "/timeline": "时间线", "/statistics": "游玩足迹", "/tv": "大屏模式", "/night-hunt": "NIGHT HUNT · 夜猎" } as Record<string, string>)[path] || "页面未找到"} — LUMEN`;
     if (initial.current) {
       initial.current = false;
     } else main.current?.focus({ preventScroll: true });
@@ -70,6 +75,7 @@ export default function App() {
     ["/library", "游戏库"],
     ["/timeline", "时间线"],
     ["/statistics", "统计"],
+    ["/night-hunt", "夜猎"],
   ];
   return (
     <MotionConfig reducedMotion="user">
@@ -84,7 +90,7 @@ export default function App() {
       >
         跳至主要内容
       </a>
-      {!isTV && (
+      {!isImmersive && (
         <header
           className={`site-header ${isDark ? "on-dark" : "on-light"} ${menu ? "menu-open" : ""}`}
         >
@@ -171,6 +177,8 @@ export default function App() {
                 <Timeline games={games} />
               ) : path === "/statistics" ? (
                 <Statistics games={games} />
+              ) : isHunt ? (
+                <NightHunt />
               ) : isTV ? (
                 <TV games={games} />
               ) : (
@@ -186,7 +194,7 @@ export default function App() {
           </AnimatePresence>
         </Suspense>
       </main>
-      {!isTV && (
+      {!isImmersive && (
         <footer className="site-footer">
           <div className="shell">
             <a href="#/" className="brand">

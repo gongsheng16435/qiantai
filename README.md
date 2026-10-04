@@ -28,8 +28,23 @@ npm run preview   # Serve the production output locally
 - **Timeline** — personal history grouped by the year first played, with undated entries kept visible. Quiet image movement follows scrolling.
 - **Statistics** — live totals, finished stories, favorites, average score, platform and genre breakdowns, score ranges, and release years. All figures derive from the same editable archive.
 - **TV mode** — a focused, full-window experience with large imagery, a directional cover rail, an optional browser fullscreen control, and standard-mapped gamepad support.
+- **NIGHT HUNT / 夜猎** — an original playable short at `#/night-hunt`: an illustrated full-screen cover, one two-phase boss, stamina, perfect dodges, timed parries and posture breaks. Phaser 3 draws an original charcoal-and-chalk arena; Web Audio synthesizes the score and combat sound. The engine loads only after **PLAY**.
 
 Every default photograph is bundled locally. The demo uses atmospheric photographs and original typographic covers, **not official game screenshots**. The detail gallery labels this clearly. See [artwork sources and licensing](docs/ARTWORK.md).
+
+## NIGHT HUNT · 夜猎
+
+[直接游玩](https://gongsheng16435.github.io/qiantai/#/night-hunt)。也可以从首页的 **NIGHT HUNT → PLAY** 封面或导航「夜猎」进入。
+
+WASD / 方向键移动，鼠标左键挥刃（可按住连击），空格闪避，E / 鼠标右键弹反，Escape 暂停。鼠标决定朝向；触控提供移动摇杆和三枚招式按钮，建议横屏。白色预警可以弹反，暗红重砸与冲击波需要闪避。完美防御回复少量生命与精力，弹反积累架势，击破后近身挥刃可处决。Boss 半血进入月蚀阶段，场景、连招、粒子和音乐一起变化。
+
+单局按约 3–6 分钟的谨慎进攻节奏设计，熟练玩家可更快通关；倒下 0.95 秒后自动重开。页面提供静音、暂停、全屏、重开和结算；浏览器不允许原生全屏时仍以窗口全屏运行。切出窗口自动暂停，减少动态效果偏好会关闭震屏、强闪光和装饰性运动。
+
+![NIGHT HUNT cover](docs/screenshots/night-hunt-cover.png)
+
+![NIGHT HUNT arena](docs/screenshots/night-hunt-arena.png)
+
+美术和音乐均由本项目绘制 / 合成，不下载其他游戏的角色、场景或音轨；不需要 API、登录或额外资源服务。详见 [机制、架构与验证记录](docs/NIGHT_HUNT.md)。
 
 ![Library](docs/screenshots/library-desktop.png)
 
@@ -82,6 +97,14 @@ src/
     Timeline.tsx          History grouped by personal dates
     Statistics.tsx        Archive-derived consumer statistics
     TV.tsx                Directional navigation and fullscreen
+    NightHunt.tsx         Standalone game cover, HUD, pause/results, touch controls
+  night-hunt/
+    createGame.ts         Lazy Phaser 3 boot and canvas scaling
+    NightHuntScene.ts     Encounter, input, combat, particles, lifecycle
+    renderer.ts           Original procedural line-art and two-phase environment
+    audio.ts              Web Audio music and synthesized sound effects
+    types.ts              Small renderer / scene / React contracts
+    night-hunt.css        Full-screen game interface and responsive styles
   data/games.ts           Typed 20-game demo dataset
   lib/archive.ts          Local persistence, field normalization, routing helpers
   lib/providers.ts        Local / Steam / RAWG / IGDB artwork adapters
@@ -89,6 +112,7 @@ src/
 public/
   artwork/                Bundled photographs
   games/manifest.json     Optional per-game artwork overrides
+  night-hunt/cover.svg     Original local illustration
 ```
 
 React + TypeScript + Vite, Framer Motion, and Lucide icons. Pages are loaded lazily. Routing uses `#/library`, `#/game/journey`, etc., so GitHub Pages deep links need no server rewrite. Vite uses a relative asset base, including when deployed below `/qiantai/`.

@@ -1,0 +1,901 @@
+.hunt-page {
+  --hunt-paper: #e0dfd3;
+  --hunt-muted: #999a93;
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  height: 100svh;
+  min-height: 600px;
+  overflow: hidden;
+  background: #101312;
+  color: var(--hunt-paper);
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+    "Microsoft YaHei", sans-serif;
+}
+.hunt-page:fullscreen {
+  height: 100dvh;
+}
+.hunt-page button:focus-visible,
+.hunt-page a:focus-visible {
+  outline-color: #d9d9c3;
+}
+.hunt-cover-art,
+.hunt-cover-shade {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -2;
+}
+.hunt-cover-art {
+  animation: hunt-reveal 2s ease-out both;
+}
+.hunt-cover-shade {
+  z-index: -1;
+  background:
+    linear-gradient(90deg, #101312e8 0%, #10131295 28%, transparent 67%),
+    linear-gradient(
+      0deg,
+      #101312db 0%,
+      transparent 25%,
+      transparent 75%,
+      #10131255 100%
+    );
+}
+.hunt-cover-header {
+  position: absolute;
+  top: 36px;
+  left: 4.5%;
+  right: 4.5%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: #c1c3b8;
+}
+.hunt-cover-header a {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  letter-spacing: 0.25em;
+}
+.hunt-cover-header > span {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #8a8f83;
+  letter-spacing: 0.32em;
+}
+.hunt-cover-header button {
+  padding: 10px;
+  margin: -10px;
+}
+.hunt-cover-copy {
+  position: absolute;
+  left: 9%;
+  top: 22%;
+}
+.hunt-kicker {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  color: #a5ac9b;
+}
+.hunt-kicker > span {
+  width: 5px;
+  height: 5px;
+  border: 1px solid #adb69e;
+  transform: rotate(45deg);
+}
+.hunt-cover-copy h1 {
+  margin: 27px 0 21px;
+  font-family: "Bodoni MT", "Times New Roman", serif;
+  font-size: clamp(80px, 9.5vw, 156px);
+  font-weight: 400;
+  line-height: 0.83;
+  letter-spacing: -0.04em;
+}
+.hunt-cover-copy h1 > span {
+  display: block;
+}
+.hunt-cover-copy h1 > span + span {
+  margin-top: 9px;
+}
+.hunt-cover-copy h1 i {
+  display: inline-block;
+  vertical-align: top;
+  margin: 12px 0 0 22px;
+  font:
+    normal 12px/1.4 "Songti SC",
+    "Noto Serif CJK SC",
+    serif;
+  letter-spacing: 0.3em;
+  writing-mode: vertical-rl;
+  color: #949d8a;
+}
+.hunt-cover-line {
+  font-family: "Songti SC", "Noto Serif CJK SC", serif;
+  font-size: clamp(17px, 1.5vw, 23px);
+  letter-spacing: 0.22em;
+  margin: 30px 0 15px;
+}
+.hunt-cover-description {
+  color: #9a9e93;
+  font-size: 12px;
+  line-height: 1.9;
+  letter-spacing: 0.07em;
+}
+.hunt-play {
+  display: flex;
+  align-items: center;
+  gap: 52px;
+  padding: 0;
+  margin: 29px 0 11px;
+  font-size: 17px;
+  letter-spacing: 0.3em;
+}
+.hunt-play-arrow {
+  display: grid;
+  place-items: center;
+  width: 53px;
+  height: 53px;
+  border: 1px solid #bfc4b398;
+  border-radius: 50%;
+  transition:
+    background 0.3s,
+    color 0.3s,
+    transform 0.3s;
+}
+.hunt-play:hover .hunt-play-arrow {
+  background: var(--hunt-paper);
+  color: #141813;
+  transform: translateX(7px);
+}
+.hunt-play-note {
+  color: #777e71;
+  font-size: 10px;
+  letter-spacing: 0.13em;
+}
+.hunt-cover-footer {
+  position: absolute;
+  bottom: 42px;
+  left: 4.5%;
+  right: 4.5%;
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  padding-top: 25px;
+  border-top: 1px solid #b7bda51c;
+}
+.hunt-instructions {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  color: #8d9587;
+  font-size: 10px;
+}
+.hunt-instructions > span {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  white-space: nowrap;
+}
+.hunt-instructions kbd {
+  font-family: inherit;
+  font-size: 10px;
+  color: #d0d2c6;
+}
+.hunt-cover-footer p {
+  font-size: 11px;
+  line-height: 1.9;
+  letter-spacing: 0.09em;
+  text-align: right;
+}
+.hunt-cover-footer p span {
+  color: #818879;
+}
+.hunt-edition {
+  position: absolute;
+  top: 50%;
+  right: 32px;
+  font-size: 8px;
+  letter-spacing: 0.22em;
+  writing-mode: vertical-rl;
+  color: #6d7765;
+}
+.hunt-mobile-note {
+  display: none;
+}
+.hunt-page.is-playing {
+  min-height: 0;
+  background: #0b0e0e;
+  user-select: none;
+  touch-action: none;
+}
+.hunt-canvas {
+  position: absolute;
+  inset: 0;
+  outline: none !important;
+}
+.hunt-canvas canvas {
+  display: block;
+}
+.hunt-hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transition: opacity 0.35s;
+  background: linear-gradient(
+    180deg,
+    #090d0c38,
+    transparent 25%,
+    transparent 75%,
+    #090d0c44
+  );
+}
+.hunt-hud.is-dimmed {
+  opacity: 0.25;
+}
+.hunt-player-hud {
+  position: absolute;
+  top: max(35px, env(safe-area-inset-top));
+  left: 4%;
+  width: clamp(130px, 19vw, 260px);
+}
+.hunt-hud-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 11px;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+}
+.hunt-hud-label small {
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  color: #939b8b;
+  font-variant-numeric: tabular-nums;
+}
+.hunt-meter {
+  height: 4px;
+  width: 100%;
+  background: #b4b9a521;
+  overflow: hidden;
+}
+.hunt-meter > span {
+  display: block;
+  height: 100%;
+  background: #d2d8c1;
+  transition: width 0.13s linear;
+}
+.hunt-meter.stamina {
+  margin-top: 6px;
+  height: 2px;
+}
+.hunt-meter.stamina > span {
+  background: #969e7e;
+}
+.hunt-stamina-label {
+  display: block;
+  margin-top: 5px;
+  color: #76806c;
+  font-size: 8px;
+  letter-spacing: 0.14em;
+}
+.hunt-time {
+  position: absolute;
+  top: 36px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  font-variant-numeric: tabular-nums;
+}
+.hunt-time small {
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  color: #727f71;
+}
+.hunt-game-actions {
+  pointer-events: auto;
+  position: absolute;
+  right: 3.5%;
+  top: 29px;
+  display: flex;
+  gap: 6px;
+}
+.hunt-game-actions button {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  color: #a4b09e;
+  transition: color 0.2s;
+}
+.hunt-game-actions button:hover {
+  color: #f0f1e5;
+}
+.hunt-feedback {
+  position: absolute;
+  left: 50%;
+  top: 24%;
+  transform: translateX(-50%);
+  width: 80%;
+  text-align: center;
+  font-family: "Songti SC", "Noto Serif CJK SC", serif;
+  letter-spacing: 0.28em;
+  font-size: 20px;
+  color: #e7e6d1;
+  text-shadow: 0 2px 12px #000;
+}
+.hunt-feedback.is-dead {
+  color: #d7b2a4;
+  font-size: 28px;
+  top: 42%;
+}
+.hunt-boss-hud {
+  position: absolute;
+  width: 46%;
+  max-width: 680px;
+  left: 50%;
+  bottom: 9%;
+  transform: translateX(-50%);
+}
+.hunt-boss-name {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 12px;
+  font-family: "Songti SC", "Noto Serif CJK SC", serif;
+  font-size: 14px;
+  letter-spacing: 0.15em;
+}
+.hunt-boss-name small {
+  font-family: sans-serif;
+  font-size: 9px;
+  color: #879381;
+  letter-spacing: 0.17em;
+}
+.hunt-meter.boss {
+  height: 4px;
+}
+.hunt-meter.boss > span {
+  background: #b8bba6;
+}
+.phase-2 .hunt-meter.boss > span {
+  background: #b46550;
+}
+.hunt-meter.posture {
+  margin: 7px auto 0;
+  height: 2px;
+  width: 55%;
+}
+.hunt-meter.posture > span {
+  margin: auto;
+  background: #d5bf86;
+}
+.hunt-posture-label {
+  display: block;
+  text-align: center;
+  font-size: 8px;
+  color: #7d866f;
+  margin-top: 8px;
+  letter-spacing: 0.16em;
+}
+.hunt-bottom-hints {
+  position: absolute;
+  left: 4%;
+  right: 4%;
+  bottom: 25px;
+  display: flex;
+  justify-content: space-between;
+  color: #78836f;
+  font-size: 9px;
+  letter-spacing: 0.07em;
+}
+.hunt-bottom-hints .hunt-instructions {
+  gap: 20px;
+  font-size: 9px;
+}
+.hunt-bottom-hints kbd {
+  font-size: 9px;
+}
+.hunt-loading,
+.hunt-overlay {
+  position: absolute;
+  z-index: 5;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #101612d9;
+  color: var(--hunt-paper);
+  text-align: center;
+  padding: 24px;
+}
+.hunt-loading p {
+  margin-top: 25px;
+  font-family: "Songti SC", serif;
+  letter-spacing: 0.3em;
+  font-size: 14px;
+}
+.hunt-moon-loader {
+  width: 30px;
+  height: 30px;
+  border: 1px solid #9ba18c;
+  border-radius: 50%;
+  box-shadow: inset 9px 0 #9ba18c;
+  animation: hunt-breathe 2s ease-in-out infinite alternate;
+}
+.hunt-overlay {
+  backdrop-filter: blur(8px);
+}
+.hunt-overlay .hunt-kicker {
+  font-size: 9px;
+  letter-spacing: 0.25em;
+}
+.hunt-overlay h2 {
+  margin: 27px 0 15px;
+  font-family: "Songti SC", "Noto Serif CJK SC", serif;
+  font-size: clamp(25px, 3vw, 43px);
+  font-weight: 400;
+  letter-spacing: 0.06em;
+}
+.hunt-overlay > p {
+  font-size: 12px;
+  color: #8e9a85;
+  line-height: 1.8;
+}
+.hunt-overlay .hunt-instructions {
+  margin-top: 34px;
+  gap: 24px;
+}
+.hunt-pause-tips {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 11px;
+  margin: 30px 0 15px;
+  padding: 22px 0;
+  border-block: 1px solid #aab49e26;
+  color: #8f9a84;
+  font-size: 11px;
+}
+.hunt-pause-tips b {
+  margin-right: 20px;
+  font-weight: 400;
+  color: #d8dec9;
+}
+.hunt-primary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 60px;
+  padding: 15px 22px;
+  background: #d8dccb;
+  color: #171d16;
+  font-size: 12px;
+  margin-top: 20px;
+  min-width: 210px;
+}
+.hunt-primary:hover {
+  background: #eef0e4;
+}
+.hunt-text-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #98a18f;
+  margin-top: 21px;
+  font-size: 11px;
+}
+.hunt-results {
+  display: flex;
+  gap: 60px;
+  margin: 35px 0 18px;
+}
+.hunt-results > span {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  color: #8d9b83;
+  font-size: 10px;
+}
+.hunt-results strong {
+  font-family: "Times New Roman", serif;
+  color: #dee2d3;
+  font-size: 37px;
+  font-weight: 400;
+}
+.hunt-touch {
+  display: none;
+}
+.hunt-rotate-note {
+  display: none;
+}
+@media (max-width: 600px) and (orientation: portrait) {
+  .hunt-rotate-note {
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 33%;
+    text-align: center;
+    color: #7c876f;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+  }
+}
+@keyframes hunt-reveal {
+  from {
+    opacity: 0.4;
+    transform: scale(1.025);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes hunt-breathe {
+  to {
+    opacity: 0.35;
+  }
+}
+@media (min-aspect-ratio: 19/9) {
+  .hunt-cover-copy {
+    top: 17%;
+  }
+  .hunt-cover-copy h1 {
+    font-size: 17vh;
+  }
+  .hunt-cover-line {
+    margin-top: 20px;
+  }
+}
+@media (max-height: 760px) and (min-width: 761px) {
+  .hunt-cover-copy {
+    top: 18%;
+  }
+  .hunt-cover-copy h1 {
+    font-size: 17vh;
+    margin-block: 20px;
+  }
+  .hunt-cover-line {
+    margin-top: 20px;
+  }
+  .hunt-cover-footer {
+    bottom: 24px;
+    padding-top: 18px;
+  }
+  .hunt-play {
+    margin-top: 20px;
+  }
+}
+@media (max-width: 760px) {
+  .hunt-page {
+    min-height: 680px;
+  }
+  .hunt-cover-art {
+    object-position: 63% center;
+    opacity: 0.75;
+  }
+  .hunt-cover-shade {
+    background:
+      linear-gradient(
+        0deg,
+        #101312 0%,
+        #10131299 35%,
+        #10131220 65%,
+        #10131280 100%
+      ),
+      linear-gradient(90deg, #10131288, transparent);
+  }
+  .hunt-cover-header {
+    top: 27px;
+    left: 7%;
+    right: 7%;
+  }
+  .hunt-cover-header > span {
+    display: none;
+  }
+  .hunt-cover-copy {
+    top: 22%;
+    left: 9%;
+  }
+  .hunt-cover-copy h1 {
+    font-size: clamp(88px, 22vw, 150px);
+    margin-top: 23px;
+  }
+  .hunt-cover-line {
+    margin-top: 23px;
+    font-size: 18px;
+  }
+  .hunt-cover-description {
+    font-size: 11px;
+  }
+  .hunt-cover-footer {
+    left: 9%;
+    right: 9%;
+    bottom: 55px;
+  }
+  .hunt-cover-footer .hunt-instructions {
+    display: none;
+  }
+  .hunt-cover-footer p {
+    text-align: left;
+    font-size: 10px;
+  }
+  .hunt-mobile-note {
+    display: block;
+    position: absolute;
+    bottom: 26px;
+    left: 9%;
+    font-size: 9px;
+    color: #78806f;
+    letter-spacing: 0.1em;
+  }
+  .hunt-edition {
+    right: 18px;
+    top: 37%;
+  }
+  .hunt-player-hud {
+    top: 24px;
+    left: 5%;
+    width: 32%;
+  }
+  .hunt-time {
+    top: 24px;
+    font-size: 10px;
+  }
+  .hunt-time small {
+    font-size: 8px;
+  }
+  .hunt-game-actions {
+    top: 15px;
+    right: 3%;
+    gap: 0;
+  }
+  .hunt-game-actions button {
+    width: 31px;
+    height: 36px;
+  }
+  .hunt-game-actions button svg {
+    width: 15px;
+  }
+  .hunt-boss-hud {
+    width: 75%;
+    bottom: 22%;
+  }
+  .hunt-boss-name {
+    font-size: 12px;
+  }
+  .hunt-boss-name small {
+    font-size: 8px;
+  }
+  .hunt-bottom-hints {
+    display: none;
+  }
+  .hunt-feedback {
+    font-size: 17px;
+    top: 25%;
+  }
+  .hunt-overlay .hunt-instructions {
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 300px;
+    gap: 13px 20px;
+  }
+  .hunt-pause-tips {
+    font-size: 10px;
+    line-height: 1.7;
+  }
+  .hunt-pause-tips b {
+    margin-right: 10px;
+  }
+  .hunt-results {
+    gap: 32px;
+  }
+}
+@media (pointer: coarse) {
+  .hunt-touch {
+    display: flex;
+    position: absolute;
+    bottom: max(25px, env(safe-area-inset-bottom));
+    left: 6%;
+    right: 5%;
+    justify-content: space-between;
+    align-items: end;
+  }
+  .hunt-stick {
+    pointer-events: auto;
+    width: 92px;
+    height: 92px;
+    border: 1px solid #b7c7a138;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    touch-action: none;
+    background: #111a1366;
+  }
+  .hunt-stick > span {
+    display: block;
+    width: 34px;
+    height: 34px;
+    border: 1px solid #acba93a3;
+    border-radius: 50%;
+    background: #c1cea11b;
+  }
+  .hunt-touch-actions {
+    display: flex;
+    gap: 12px;
+    align-items: end;
+    pointer-events: auto;
+  }
+  .hunt-touch-actions button {
+    width: 52px;
+    height: 52px;
+    border: 1px solid #b7c7a14d;
+    border-radius: 50%;
+    color: #c6d1b7;
+    font-size: 10px;
+    touch-action: none;
+    background: #111a1377;
+  }
+  .hunt-touch-actions .touch-attack {
+    width: 65px;
+    height: 65px;
+    border-color: #d1d9c286;
+    font-size: 12px;
+  }
+  .hunt-touch-actions .touch-parry {
+    margin-bottom: 30px;
+  }
+  .hunt-bottom-hints {
+    display: none;
+  }
+}
+@media (max-height: 520px) and (orientation: landscape) {
+  .hunt-page {
+    min-height: 0;
+  }
+  .hunt-cover-copy {
+    top: 23%;
+    left: 9%;
+  }
+  .hunt-cover-copy h1 {
+    font-size: 22vh;
+    margin-block: 12px;
+  }
+  .hunt-cover-copy h1 > span {
+    display: inline;
+  }
+  .hunt-cover-copy h1 > span + span {
+    margin-left: 20px;
+  }
+  .hunt-cover-copy h1 i {
+    display: none;
+  }
+  .hunt-cover-copy .hunt-kicker {
+    font-size: 8px;
+  }
+  .hunt-cover-description,
+  .hunt-cover-footer,
+  .hunt-edition,
+  .hunt-mobile-note {
+    display: none;
+  }
+  .hunt-cover-line {
+    font-size: 14px;
+    margin-block: 15px;
+  }
+  .hunt-play {
+    position: absolute;
+    left: 105%;
+    bottom: 10px;
+    margin: 0;
+    gap: 20px;
+  }
+  .hunt-play-arrow {
+    width: 44px;
+    height: 44px;
+  }
+  .hunt-play-note {
+    font-size: 8px;
+  }
+  .hunt-cover-header {
+    top: 20px;
+  }
+  .hunt-player-hud {
+    top: 20px;
+    width: 180px;
+  }
+  .hunt-time {
+    top: 20px;
+  }
+  .hunt-game-actions {
+    top: 12px;
+  }
+  .hunt-boss-hud {
+    width: 43%;
+    bottom: 8%;
+  }
+  .hunt-boss-name {
+    font-size: 11px;
+    margin-bottom: 7px;
+  }
+  .hunt-boss-name small {
+    font-size: 7px;
+  }
+  .hunt-posture-label {
+    font-size: 7px;
+    margin-top: 6px;
+  }
+  .hunt-feedback {
+    font-size: 15px;
+    top: 22%;
+  }
+  .hunt-touch {
+    bottom: 18px;
+    left: 4%;
+    right: 4%;
+  }
+  .hunt-stick {
+    width: 76px;
+    height: 76px;
+  }
+  .hunt-touch-actions {
+    gap: 9px;
+  }
+  .hunt-touch-actions button {
+    width: 44px;
+    height: 44px;
+    font-size: 9px;
+  }
+  .hunt-touch-actions .touch-attack {
+    width: 55px;
+    height: 55px;
+  }
+  .hunt-overlay h2 {
+    font-size: 26px;
+    margin: 15px 0 8px;
+  }
+  .hunt-overlay .hunt-instructions {
+    margin-top: 18px;
+    max-width: none;
+  }
+  .hunt-pause-tips {
+    display: none;
+  }
+  .hunt-overlay .hunt-text-button {
+    margin-top: 12px;
+  }
+  .hunt-primary {
+    margin-top: 22px;
+    padding: 12px 20px;
+  }
+  .hunt-results {
+    margin: 20px 0 0;
+  }
+  .hunt-results strong {
+    font-size: 28px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hunt-page *,
+  .hunt-page *::before,
+  .hunt-page *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

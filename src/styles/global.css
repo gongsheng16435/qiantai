@@ -19,6 +19,106 @@
   --shell: min(1512px, calc(100% - 128px));
   font-optical-sizing: auto;
 }
+.home-hunt-feature {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  height: 530px;
+  color: #e0dfd3;
+  background: #101312;
+  isolation: isolate;
+}
+.home-hunt-feature > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 52%;
+  z-index: -2;
+  transition: transform 1.3s ease;
+}
+.home-hunt-feature::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(90deg, #101312e8, #10131255 55%, transparent);
+}
+.home-hunt-feature:hover > img {
+  transform: scale(1.025);
+}
+.home-hunt-copy {
+  position: absolute;
+  left: max(64px, calc((100% - 1512px) / 2));
+  top: 24%;
+}
+.home-hunt-copy > p {
+  font-size: 9px;
+  letter-spacing: 0.23em;
+  color: #9aa390;
+  margin-bottom: 28px;
+}
+.home-hunt-copy h2 {
+  font:
+    400 clamp(44px, 5.6vw, 88px) / 1 "Times New Roman",
+    serif;
+  letter-spacing: -0.04em;
+}
+.home-hunt-copy > span {
+  display: block;
+  font-family: "Songti SC", "Noto Serif CJK SC", serif;
+  font-size: 16px;
+  letter-spacing: 0.14em;
+  color: #c2c8b6;
+  margin-top: 22px;
+}
+.home-hunt-copy strong {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  margin-top: 39px;
+}
+.home-hunt-copy strong svg {
+  transition: transform 0.3s;
+}
+.home-hunt-feature:hover strong svg {
+  transform: translateX(6px);
+}
+.home-hunt-caption {
+  position: absolute;
+  right: 5%;
+  bottom: 35px;
+  color: #8b9681;
+  font-size: 9px;
+  letter-spacing: 0.13em;
+}
+@media (max-width: 760px) {
+  .home-hunt-feature {
+    height: 470px;
+  }
+  .home-hunt-feature > img {
+    object-position: 68% center;
+    opacity: 0.68;
+  }
+  .home-hunt-copy {
+    left: 7%;
+    top: 25%;
+  }
+  .home-hunt-copy h2 {
+    font-size: 49px;
+  }
+  .home-hunt-copy > span {
+    font-size: 14px;
+  }
+  .home-hunt-caption {
+    left: 7%;
+    right: auto;
+  }
+}
 * {
   box-sizing: border-box;
 }
