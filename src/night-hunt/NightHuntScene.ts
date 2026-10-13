@@ -104,6 +104,13 @@ export class NightHuntScene extends Phaser.Scene {
     this.muted = options.muted;
   }
 
+  preload() {
+    this.load.image(
+      "hunt-courtyard",
+      `${import.meta.env.BASE_URL}night-hunt/courtyard.webp`,
+    );
+  }
+
   create() {
     this.painter = createHuntRenderer(this);
     this.soundscape = new HuntAudio();

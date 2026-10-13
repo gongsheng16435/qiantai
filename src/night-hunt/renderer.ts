@@ -1,20 +1,14 @@
 import Phaser from "phaser";
 import { ARENA } from "./types";
-import type {
-  FighterVisual,
-  HuntVisual,
-  BossVisual,
-  TelegraphVisual,
-} from "./types";
+import { drawHunter, drawBoss } from "./fighters";
+import type { HuntVisual, TelegraphVisual } from "./types";
 
 // Original artwork, drawn here rather than fetched: charcoal, scratched paper,
 // ruined masonry and a creature assembled from a cracked bell and weathered bone.
 const W = 1280,
   H = 720;
 const CHALK = 0xdad4c4,
-  PAPER = 0xf2ebd9,
-  ASH = 0x777971,
-  INK = 0x171b1b;
+  PAPER = 0xf2ebd9;
 type Point = [number, number];
 type G = Phaser.GameObjects.Graphics;
 
@@ -49,17 +43,6 @@ function line(g: G, points: Point[], color = CHALK, alpha = 0.6, width = 1) {
     false,
   );
 }
-function bone(g: G, points: Point[], width = 5, light = CHALK) {
-  line(g, points, INK, 1, width + 5);
-  line(g, points, light, 0.72, width);
-  line(
-    g,
-    points.map(([x, y]) => [x + 1.5, y + 1.5]),
-    0x494c46,
-    0.8,
-    Math.max(1, width - 3),
-  );
-}
 function canvasPath(
   c: CanvasRenderingContext2D,
   p: Point[],
@@ -81,19 +64,12 @@ function canvasPath(
   }
 }
 
-function paintWorld(c: CanvasRenderingContext2D) {
-  const rnd = random(4173);
-  const sky = c.createLinearGradient(0, 0, 0, H);
-  sky.addColorStop(0, "#101719");
-  sky.addColorStop(0.47, "#303737");
-  sky.addColorStop(0.72, "#202727");
-  sky.addColorStop(1, "#0d1314");
-  c.fillStyle = sky;
-  c.fillRect(0, 0, W, H);
+function paintMoon(c: CanvasRenderingContext2D) {
+  const rnd = random(7193);
   const glow = c.createRadialGradient(810, 174, 10, 810, 174, 425);
-  glow.addColorStop(0, "#c2c6b026");
-  glow.addColorStop(0.5, "#9ca99c0c");
-  glow.addColorStop(1, "#83918700");
+  glow.addColorStop(0, "#ddd8cc22");
+  glow.addColorStop(0.5, "#c7c8cc0c");
+  glow.addColorStop(1, "#c7c8cc00");
   c.fillStyle = glow;
   c.fillRect(0, 0, W, H);
   // A huge engraved moon, with fine irregular contour lines and crater shading.
@@ -102,16 +78,29 @@ function paintWorld(c: CanvasRenderingContext2D) {
   c.arc(821, 181, 132, 0, Math.PI * 2);
   c.clip();
   const moon = c.createLinearGradient(700, 60, 930, 310);
-  moon.addColorStop(0, "#d3d4bf");
-  moon.addColorStop(0.6, "#b4bbaa");
-  moon.addColorStop(1, "#828e83");
+  moon.addColorStop(0, "#bec2c0");
+  moon.addColorStop(0.6, "#999e9d");
+  moon.addColorStop(1, "#626c73");
   c.fillStyle = moon;
   c.fillRect(685, 40, 275, 280);
+  // Uneven lunar seas soften the regular hatch marks into worn stone.
+  c.save();
+  c.filter = "blur(4px)";
+  for (let i = 0; i < 35; i++) {
+    const cluster = i % 3;
+    const x = [764, 832, 861][cluster] + (rnd() - 0.5) * 60;
+    const y = [133, 234, 148][cluster] + (rnd() - 0.5) * 65;
+    c.fillStyle = `rgba(28,39,49,${0.025 + rnd() * 0.05})`;
+    c.beginPath();
+    c.ellipse(x, y, 10 + rnd() * 29, 7 + rnd() * 20, -0.4, 0, Math.PI * 2);
+    c.fill();
+  }
+  c.restore();
   c.lineWidth = 0.6;
   for (let i = 0; i < 1350; i++) {
     const x = 685 + rnd() * 280,
       y = 45 + rnd() * 274;
-    c.strokeStyle = `rgba(43,58,55,${0.03 + rnd() * 0.12})`;
+    c.strokeStyle = `rgba(43,46,51,${0.03 + rnd() * 0.12})`;
     c.beginPath();
     c.moveTo(x, y);
     c.lineTo(x + 6 + rnd() * 30, y - 2 - rnd() * 9);
@@ -121,7 +110,7 @@ function paintWorld(c: CanvasRenderingContext2D) {
     const x = 711 + rnd() * 228,
       y = 58 + rnd() * 240,
       r = 3 + rnd() * 24;
-    c.strokeStyle = `rgba(56,72,65,${0.035 + rnd() * 0.08})`;
+    c.strokeStyle = `rgba(52,57,64,${0.035 + rnd() * 0.08})`;
     c.lineWidth = 0.8;
     c.beginPath();
     c.ellipse(x, y, r, r * 0.58, -0.6, 0, Math.PI * 2);
@@ -134,16 +123,66 @@ function paintWorld(c: CanvasRenderingContext2D) {
           [x - r + j * 3 + 7, y - 7],
         ],
         undefined,
-        "#3c4d4214",
+        "#353b4514",
         0.7,
       );
   }
   c.restore();
-  c.strokeStyle = "#e5e3cf44";
+  c.strokeStyle = "#eee8dc55";
   c.lineWidth = 0.6;
   c.beginPath();
   c.arc(821, 181, 133.5, 0.1, Math.PI * 1.92);
   c.stroke();
+}
+
+function paintWorld(c: CanvasRenderingContext2D, backdrop?: CanvasImageSource) {
+  if (!backdrop) {
+    paintFallbackWorld(c);
+    return;
+  }
+  // Raise the illustrated horizon to the walkable ground plane. The illustration
+  // remains local; the engraved moon and all playable silhouettes are drawn here.
+  c.drawImage(backdrop, -W * 0.085, -H * 0.17, W * 1.17, H * 1.17);
+  c.fillStyle = "#080b0e60";
+  c.fillRect(0, 0, W, H);
+  const ground = c.createLinearGradient(0, H * 0.47, 0, H);
+  ground.addColorStop(0, "#080a0c00");
+  ground.addColorStop(0.5, "#080a0c45");
+  ground.addColorStop(1, "#06080b8c");
+  c.fillStyle = ground;
+  c.fillRect(0, 0, W, H);
+  paintMoon(c);
+  // Silvery spill ties the moon to the wet stone without lifting the whole image.
+  const spill = c.createRadialGradient(813, 450, 5, 813, 450, 340);
+  spill.addColorStop(0, "#dbdfd20b");
+  spill.addColorStop(1, "#dbdfd200");
+  c.fillStyle = spill;
+  c.fillRect(0, 350, W, H - 350);
+  const edge = c.createRadialGradient(
+    W * 0.52,
+    H * 0.5,
+    H * 0.27,
+    W * 0.52,
+    H * 0.5,
+    W * 0.65,
+  );
+  edge.addColorStop(0, "#080a0c00");
+  edge.addColorStop(0.6, "#080a0c05");
+  edge.addColorStop(1, "#06080b99");
+  c.fillStyle = edge;
+  c.fillRect(0, 0, W, H);
+}
+
+function paintFallbackWorld(c: CanvasRenderingContext2D) {
+  const rnd = random(4173);
+  const sky = c.createLinearGradient(0, 0, 0, H);
+  sky.addColorStop(0, "#101719");
+  sky.addColorStop(0.47, "#303737");
+  sky.addColorStop(0.72, "#202727");
+  sky.addColorStop(1, "#0d1314");
+  c.fillStyle = sky;
+  c.fillRect(0, 0, W, H);
+  paintMoon(c);
 
   // A distant skyline, mostly lost in the damp air.
   for (let i = 0; i < 28; i++) {
@@ -472,843 +511,14 @@ function paintWorld(c: CanvasRenderingContext2D) {
   c.fillRect(0, 0, W, H);
 }
 
-function drawHunter(g: G, p: FighterVisual, time: number, reduced: boolean) {
-  const moving = p.action === "move",
-    dodge = p.action === "dodge",
-    attack = p.action === "attack",
-    parry = p.action === "parry";
-  const step = moving ? Math.sin(time * 13) : 0;
-  const bob = reduced
-    ? 0
-    : moving
-      ? Math.abs(step) * 2
-      : Math.sin(time * 2) * 0.7;
-  const swing = attack
-    ? Math.sin(Math.min(1, p.actionTime / 0.34) * Math.PI)
-    : 0;
-  g.clear();
-  g.setPosition(p.x, p.y + bob)
-    .setScale(Math.cos(p.facing) >= 0 ? 1 : -1, 1)
-    .setDepth(100 + p.y);
-  g.setRotation(p.action === "dead" ? -1.2 : dodge ? 0.22 : 0);
-  g.setAlpha(p.action === "dead" ? 0.6 : 1);
-  const light = p.action === "hurt" ? 0xe9a292 : CHALK;
-  if (dodge) {
-    for (let i = 1; i < 4; i++) {
-      const x = -i * 13;
-      polygon(
-        g,
-        [
-          [x - 8, -59],
-          [x + 7, -54],
-          [x + 11, -31],
-          [x - 3, -9],
-          [x - 13, -12],
-          [x - 9, -36],
-        ],
-        light,
-        0.04 + 0.035 * (3 - i),
-        light,
-        0,
-      );
-      line(
-        g,
-        [
-          [x - 12, -44],
-          [x - 29, -39],
-        ],
-        light,
-        0.17 / i,
-      );
-    }
-  }
-  // Soft graphite silhouette of a narrow travelling coat, split at the hem.
-  polygon(
-    g,
-    [
-      [-9, -51],
-      [6, -52],
-      [12, -39],
-      [8, -25],
-      [16 + step * 2, -8],
-      [0, -14],
-      [-9, -7],
-      [-18 - step * 2, -10],
-      [-10, -31],
-    ],
-    0x222a28,
-    1,
-    light,
-    0.72,
-    1.1,
-  );
-  polygon(
-    g,
-    [
-      [-9, -45],
-      [-4, -36],
-      [-3, -17],
-      [-11, -9],
-      [-13, -12],
-    ],
-    0x586056,
-    0.35,
-    light,
-    0.22,
-    0.7,
-  );
-  line(
-    g,
-    [
-      [-6, -45],
-      [-5, -32],
-      [-10, -19],
-    ],
-    light,
-    0.45,
-    0.8,
-  );
-  line(
-    g,
-    [
-      [3, -41],
-      [2, -28],
-      [8, -17],
-    ],
-    light,
-    0.28,
-    0.7,
-  );
-  line(
-    g,
-    [
-      [-9, -47],
-      [-1, -40],
-      [7, -47],
-    ],
-    light,
-    0.82,
-    1,
-  );
-  bone(
-    g,
-    [
-      [-5, -16],
-      [-8 - step * 5, -5],
-      [-6 - step * 7, 0],
-    ],
-    3.3,
-    light,
-  );
-  bone(
-    g,
-    [
-      [5, -17],
-      [7 + step * 5, -6],
-      [11 + step * 7, 0],
-    ],
-    3.3,
-    light,
-  );
-  line(
-    g,
-    [
-      [-10 - step * 7, 0],
-      [-4 - step * 7, 0],
-    ],
-    light,
-    0.72,
-    2.2,
-  );
-  line(
-    g,
-    [
-      [7 + step * 7, 0],
-      [16 + step * 7, 0],
-    ],
-    light,
-    0.72,
-    2.2,
-  );
-  // Face is a sliver of paper under the broad, weather-worn hat.
-  polygon(
-    g,
-    [
-      [-5, -60],
-      [6, -60],
-      [8, -53],
-      [3, -49],
-      [-4, -51],
-    ],
-    0x111a1a,
-    1,
-    light,
-    0.6,
-    0.8,
-  );
-  line(
-    g,
-    [
-      [5, -57],
-      [8, -55],
-      [5, -54],
-    ],
-    PAPER,
-    0.8,
-    0.8,
-  );
-  polygon(
-    g,
-    [
-      [-10, -62],
-      [-6, -70],
-      [4, -72],
-      [10, -62],
-      [18, -60],
-      [8, -58],
-      [-16, -59],
-    ],
-    0x1b2422,
-    1,
-    light,
-    0.82,
-    1,
-  );
-  line(
-    g,
-    [
-      [-7, -62],
-      [9, -62],
-    ],
-    light,
-    0.4,
-    0.7,
-  );
-  // Scarf and hatching make the tiny figure legible without an outline glow.
-  polygon(
-    g,
-    [
-      [-5, -49],
-      [-20, -44],
-      [-27 - step * 2, -48],
-      [-17, -49],
-      [-9, -53],
-    ],
-    0x858573,
-    0.65,
-    light,
-    0.3,
-    0.6,
-  );
-  for (let i = 0; i < 5; i++)
-    line(
-      g,
-      [
-        [-9 + i * 3, -30],
-        [-13 + i * 3, -20],
-      ],
-      light,
-      0.14,
-      0.65,
-    );
-  const hand: Point = parry
-    ? [13, -53]
-    : attack
-      ? [22 + 16 * swing, -43 - 10 * swing]
-      : [13, -32];
-  bone(g, [[5, -47], [11, -40], hand], 3, light);
-  bone(
-    g,
-    [
-      [-9, -44],
-      [-14, -33],
-      [-9, -27],
-    ],
-    2.5,
-    light,
-  );
-  const tip: Point = parry
-    ? [24, -89]
-    : attack
-      ? [58 + 27 * swing, -64 + 70 * swing]
-      : [49, -47];
-  line(
-    g,
-    [
-      [hand[0] - 4, hand[1] + 2],
-      [tip[0], tip[1]],
-    ],
-    0x111718,
-    1,
-    4,
-  );
-  line(g, [hand, tip], PAPER, 0.95, 1.4);
-  line(
-    g,
-    [
-      [hand[0] - 3, hand[1] - 4],
-      [hand[0] + 3, hand[1] + 5],
-    ],
-    CHALK,
-    0.9,
-    2,
-  );
-  if (attack) {
-    const t = Math.min(1, p.actionTime / 0.34),
-      a = -1.2 + t * 2.6;
-    g.lineStyle(2, PAPER, Math.sin(t * Math.PI) * 0.8);
-    g.beginPath();
-    g.arc(9, -42, 61, a - 0.8, a + 0.25);
-    g.strokePath();
-    g.lineStyle(0.7, CHALK, Math.sin(t * Math.PI) * 0.4);
-    g.beginPath();
-    g.arc(9, -42, 68, a - 0.5, a + 0.22);
-    g.strokePath();
-    line(
-      g,
-      [
-        [16, -41],
-        [16 + Math.cos(a) * 68, -41 + Math.sin(a) * 61],
-      ],
-      PAPER,
-      0.35,
-      1,
-    );
-  }
-  if (parry) {
-    const a = Math.max(0.1, 1 - p.actionTime / 0.32);
-    g.lineStyle(1.2, 0xe4d0a1, a * 0.8).strokeCircle(17, -56, 16 + a * 5);
-    line(
-      g,
-      [
-        [17, -84],
-        [17, -29],
-      ],
-      0xf4e7c4,
-      a,
-      1,
-    );
-    line(
-      g,
-      [
-        [-7, -56],
-        [40, -56],
-      ],
-      0xf4e7c4,
-      a,
-      1,
-    );
-    line(
-      g,
-      [
-        [5, -70],
-        [29, -42],
-      ],
-      PAPER,
-      a * 0.5,
-      0.8,
-    );
-  }
-}
-
-function drawBoss(g: G, b: BossVisual, time: number, reduced: boolean) {
-  const facing = Math.cos(b.facing) >= 0 ? 1 : -1;
-  g.clear();
-  g.setPosition(b.x, b.y)
-    .setScale(facing, 1)
-    .setDepth(100 + b.y);
-  const phase = b.phase === 2,
-    attack = b.action === "attack",
-    moving = b.action === "move";
-  const breathe = reduced ? 0 : Math.sin(time * (phase ? 3.3 : 1.65)) * 2.5;
-  const step = moving ? Math.sin(time * 6) : 0;
-  const reach = attack
-    ? Math.sin(Math.min(1, b.actionTime / 0.3) * Math.PI) * 64
-    : 0;
-  const windup = b.action === "parry" ? Math.min(1, b.actionTime / 0.65) : 0;
-  const rage = phase ? 8 : 0;
-  const chalk = b.action === "hurt" ? 0xf5e8bf : phase ? 0xd7c3ae : CHALK;
-  g.setAlpha(b.action === "dead" ? 0.55 : 1);
-  if (b.action === "dead") g.setScale(facing * 0.95, 0.65);
-  // Torn cloak and the hollow silhouette of a ruined, walking belfry.
-  polygon(
-    g,
-    [
-      [-25, -166 + breathe],
-      [5, -175 + breathe],
-      [35, -149],
-      [46, -111],
-      [38, -74],
-      [49, -41],
-      [31, -51],
-      [29, -16],
-      [12, -40],
-      [3, -22],
-      [-2, -48],
-      [-24, -28],
-      [-20, -52],
-      [-43, -38],
-      [-30, -81],
-      [-53, -108],
-      [-51, -140],
-    ],
-    0x141b1b,
-    1,
-    chalk,
-    0.6,
-    1.2,
-  );
-  polygon(
-    g,
-    [
-      [-47, -137],
-      [-25, -151],
-      [-11, -103],
-      [-14, -67],
-      [-35, -43],
-      [-26, -79],
-      [-43, -94],
-    ],
-    0x313831,
-    0.8,
-    chalk,
-    0.25,
-    0.8,
-  );
-  for (let i = 0; i < 16; i++) {
-    const x = -40 + i * 5;
-    line(
-      g,
-      [
-        [x, -115 + (i % 4) * 3],
-        [x + 5, -80 + (i % 3) * 8],
-        [x - 3, -48 + (i % 4) * 5],
-      ],
-      chalk,
-      0.12,
-      0.8,
-    );
-  }
-  // Uneven digitigrade legs. Bone contours show through ragged cloth.
-  bone(
-    g,
-    [
-      [-27, -77],
-      [-53, -44 - step * 6],
-      [-40 - step * 9, -12],
-      [-58 - step * 9, -2],
-    ],
-    7,
-    chalk,
-  );
-  bone(
-    g,
-    [
-      [24, -75],
-      [42, -44 + step * 5],
-      [30 + step * 8, -11],
-      [52 + step * 8, -1],
-    ],
-    8,
-    chalk,
-  );
-  for (let i = 0; i < 3; i++) {
-    line(
-      g,
-      [
-        [-57 - step * 9 + i * 5, -3],
-        [-63 - step * 9 + i * 5, 2],
-      ],
-      chalk,
-      0.7,
-      1.4,
-    );
-    line(
-      g,
-      [
-        [47 + step * 8 + i * 5, -2],
-        [53 + step * 8 + i * 6, 2],
-      ],
-      chalk,
-      0.7,
-      1.4,
-    );
-  }
-  // Long rear arm, supported by mismatched joints and five sharp fingers.
-  bone(
-    g,
-    [
-      [-37, -140 + breathe],
-      [-76, -97 + breathe],
-      [-72, -40],
-      [-88, -19],
-    ],
-    7,
-    chalk,
-  );
-  for (let i = 0; i < 4; i++)
-    line(
-      g,
-      [
-        [-88 + i * 4, -23],
-        [-97 + i * 5, -11],
-        [-94 + i * 5, -4],
-      ],
-      chalk,
-      0.6,
-      1.7,
-    );
-  g.fillStyle(0x55594c, 0.75).fillCircle(-76, -97 + breathe, 5);
-  // A cracked bell hangs inside the rib cage. The negative space matters as
-  // much as the bright bones; this isn't a solid suit of armour.
-  polygon(
-    g,
-    [
-      [-7, -149 + breathe],
-      [9, -146 + breathe],
-      [19, -122],
-      [23, -93],
-      [35, -83],
-      [-24, -81],
-      [-13, -95],
-      [-12, -126],
-    ],
-    0x343b32,
-    1,
-    chalk,
-    0.65,
-    1.1,
-  );
-  line(
-    g,
-    [
-      [-20, -84],
-      [31, -85],
-    ],
-    chalk,
-    0.8,
-    2,
-  );
-  line(
-    g,
-    [
-      [-6, -136],
-      [-1, -121],
-      [-7, -115],
-      [3, -103],
-      [-2, -84],
-    ],
-    0x0d1514,
-    0.95,
-    3,
-  );
-  line(
-    g,
-    [
-      [-5, -136],
-      [0, -122],
-      [-5, -115],
-      [5, -103],
-      [0, -87],
-    ],
-    chalk,
-    0.38,
-    0.8,
-  );
-  line(
-    g,
-    [
-      [3, -82],
-      [3, -66],
-    ],
-    chalk,
-    0.68,
-    2.5,
-  );
-  polygon(
-    g,
-    [
-      [-2, -66],
-      [6, -68],
-      [9, -61],
-      [3, -56],
-      [-3, -61],
-    ],
-    0x5d6353,
-    1,
-    chalk,
-    0.65,
-  );
-  for (let i = 0; i < 5; i++) {
-    const y = -143 + i * 11;
-    line(
-      g,
-      [
-        [-1, y],
-        [-18 - i, y + 3],
-        [-26 - i, y + 9],
-      ],
-      chalk,
-      0.68,
-      2.3,
-    );
-    line(
-      g,
-      [
-        [8, y],
-        [26 + i, y + 2],
-        [32 + i, y + 8],
-      ],
-      chalk,
-      0.64,
-      2.4,
-    );
-  }
-  line(
-    g,
-    [
-      [3, -158],
-      [1, -145],
-      [4, -129],
-      [2, -110],
-    ],
-    chalk,
-    0.7,
-    3,
-  );
-  // A bowed neck and avian stone skull, pierced by a broken crown of branches.
-  bone(
-    g,
-    [
-      [2, -156 + breathe],
-      [16, -173 + breathe - rage],
-      [31, -177 + breathe - rage],
-    ],
-    8,
-    chalk,
-  );
-  polygon(
-    g,
-    [
-      [13, -187 + breathe - rage],
-      [28, -201 + breathe - rage],
-      [47, -193 + breathe - rage],
-      [59, -178 + breathe - rage],
-      [49, -169 + breathe - rage],
-      [39, -166 + breathe - rage],
-      [31, -151 + breathe - rage],
-      [19, -168 + breathe - rage],
-    ],
-    0x55594c,
-    1,
-    chalk,
-    0.9,
-    1.4,
-  );
-  polygon(
-    g,
-    [
-      [29, -190 + breathe - rage],
-      [48, -185 + breathe - rage],
-      [44, -177 + breathe - rage],
-      [30, -175 + breathe - rage],
-    ],
-    0x0c1514,
-    1,
-    chalk,
-    0.25,
-    0.7,
-  );
-  line(
-    g,
-    [
-      [34, -179 + breathe - rage],
-      [44, -181 + breathe - rage],
-    ],
-    phase ? 0xffad79 : 0xe4ddaa,
-    0.95,
-    phase ? 2 : 1.3,
-  );
-  line(
-    g,
-    [
-      [29, -198 + breathe - rage],
-      [26, -187 + breathe - rage],
-      [30, -181 + breathe - rage],
-    ],
-    chalk,
-    0.65,
-    1.2,
-  );
-  line(
-    g,
-    [
-      [44, -169 + breathe - rage],
-      [34, -161 + breathe - rage],
-      [32, -170 + breathe - rage],
-    ],
-    chalk,
-    0.8,
-    1.4,
-  );
-  for (let i = 0; i < 4; i++)
-    line(
-      g,
-      [
-        [36 + i * 3, -170 + breathe - rage],
-        [34 + i * 3, -162 + breathe - rage],
-      ],
-      chalk,
-      0.75,
-      0.9,
-    );
-  const crown: Point[][] = [
-    [
-      [20, -192],
-      [4, -213],
-      [-7, -235],
-      [-9, -256],
-    ],
-    [
-      [5, -212],
-      [-14, -220],
-      [-25, -238],
-    ],
-    [
-      [-7, -235],
-      [-22, -248],
-      [-28, -250],
-    ],
-    [
-      [30, -200],
-      [29, -222],
-      [45, -242],
-      [47, -258],
-    ],
-    [
-      [29, -222],
-      [18, -240],
-      [20, -252],
-    ],
-    [
-      [43, -239],
-      [58, -244],
-      [66, -257],
-    ],
-    [
-      [22, -200],
-      [12, -227],
-      [10, -248],
-    ],
-  ];
-  crown.forEach((p, i) =>
-    bone(
-      g,
-      p.map(([x, y]) => [x, y + breathe - rage]),
-      i === 0 || i === 3 ? 3.6 : 2,
-      chalk,
-    ),
-  );
-  // Attack arm pulls its enormous hook outward during a strike.
-  const elbow: Point = [
-    54 + reach * 0.3,
-    -117 + breathe + reach * 0.4 - windup * 45,
-  ];
-  const wrist: Point = [70 + reach, -58 + breathe - reach * 0.1 - windup * 158];
-  bone(g, [[31, -145 + breathe], elbow, wrist], 9, chalk);
-  g.fillStyle(0x6a6b59, 0.7).fillCircle(elbow[0], elbow[1], 5);
-  polygon(
-    g,
-    [
-      [wrist[0] - 5, wrist[1] - 8],
-      [wrist[0] + 10, wrist[1] - 5],
-      [wrist[0] + 13, wrist[1] + 9],
-      [wrist[0] + 2, wrist[1] + 16],
-      [wrist[0] - 5, wrist[1] + 5],
-    ],
-    0x343b32,
-    1,
-    chalk,
-    0.7,
-    1,
-  );
-  for (let i = 0; i < 4; i++)
-    line(
-      g,
-      [
-        [wrist[0] + i * 4, wrist[1] + 8],
-        [wrist[0] + 12 + i * 6, wrist[1] + 29],
-        [wrist[0] + 7 + i * 7, wrist[1] + 41],
-      ],
-      chalk,
-      0.85,
-      2 - i * 0.2,
-    );
-  line(
-    g,
-    [
-      [wrist[0] - 3, wrist[1]],
-      [wrist[0] - 15, wrist[1] + 10],
-      [wrist[0] - 10, wrist[1] + 24],
-    ],
-    chalk,
-    0.7,
-    2,
-  );
-  if (phase) {
-    line(
-      g,
-      [
-        [-8, -118],
-        [0, -111],
-        [-4, -98],
-        [4, -89],
-      ],
-      0xce714f,
-      0.85,
-      1.4,
-    );
-    line(
-      g,
-      [
-        [5, -148],
-        [11, -139],
-        [7, -124],
-      ],
-      0xe39c6c,
-      0.7,
-      1,
-    );
-    for (let i = 0; i < 5; i++)
-      line(
-        g,
-        [
-          [-31 + i * 14, -46],
-          [-35 + i * 14, -65],
-        ],
-        0xc98158,
-        0.22,
-        1,
-      );
-  }
-  if (attack && reach > 9) {
-    g.lineStyle(1.5, phase ? 0xe4ac7e : CHALK, 0.42);
-    g.beginPath();
-    g.arc(30, -73, 93, -0.9, 0.7);
-    g.strokePath();
-    g.lineStyle(0.7, CHALK, 0.18);
-    g.beginPath();
-    g.arc(27, -72, 101, -0.85, 0.65);
-    g.strokePath();
-  }
-}
-
 function drawTelegraph(g: G, t: TelegraphVisual, time: number) {
-  const color = t.parryable ? 0xd3bb80 : 0xc87462;
-  const alpha = t.active ? 0.66 : 0.13 + t.progress * 0.3;
+  const color = t.parryable ? 0xe6dfd0 : 0xd48a73;
+  const alpha = t.active ? 0.9 : 0.24 + t.progress * 0.5;
   const r = t.radius;
   const ellipse = (radius: number) =>
     g
+      .lineStyle(5, 0x080a0c, alpha * 0.65)
+      .strokeEllipse(t.x, t.y, radius * 2, radius * 1.1)
       .lineStyle(t.active ? 2 : 1, color, alpha)
       .strokeEllipse(t.x, t.y, radius * 2, radius * 1.1);
   if (t.kind === "slam" || t.kind === "wave") {
@@ -1350,7 +560,8 @@ function drawTelegraph(g: G, t: TelegraphVisual, time: number) {
       [t.x + nx * r + ny * w, t.y + (ny * r - nx * w) * 0.55],
       [t.x + ny * w, t.y - nx * w * 0.55],
     ];
-    polygon(g, pts, color, 0.025 + t.progress * 0.035, color, alpha, 1);
+    polygon(g, pts, 0x080a0c, 0.18, 0x080a0c, alpha * 0.6, 4);
+    polygon(g, pts, color, 0.025 + t.progress * 0.035, color, alpha, 1.2);
     line(
       g,
       [
@@ -1368,7 +579,8 @@ function drawTelegraph(g: G, t: TelegraphVisual, time: number) {
       const a = t.angle - spread + (i / 30) * spread * 2;
       pts.push([t.x + Math.cos(a) * r, t.y + Math.sin(a) * r * 0.55]);
     }
-    polygon(g, pts, color, 0.022 + t.progress * 0.028, color, alpha, 0.9);
+    polygon(g, pts, 0x080a0c, 0.18, 0x080a0c, alpha * 0.6, 4);
+    polygon(g, pts, color, 0.022 + t.progress * 0.028, color, alpha, 1.2);
     const progress: Point[] = [];
     for (let i = 0; i <= 30 * t.progress; i++) {
       const a = t.angle - spread + (i / 30) * spread * 2;
@@ -1414,7 +626,14 @@ export function createHuntRenderer(scene: Phaser.Scene) {
   const key = `night-hunt-etching-${Math.random().toString(36).slice(2)}`;
   const texture = scene.textures.createCanvas(key, W, H);
   if (texture) {
-    paintWorld(texture.context);
+    paintWorld(
+      texture.context,
+      scene.textures.exists("hunt-courtyard")
+        ? (scene.textures
+            .get("hunt-courtyard")
+            .getSourceImage() as HTMLImageElement)
+        : undefined,
+    );
     texture.refresh();
   }
   const backdrop = scene.add
@@ -1425,6 +644,44 @@ export function createHuntRenderer(scene: Phaser.Scene) {
     .graphics()
     .setScale(ARENA.width / W, ARENA.height / H)
     .setDepth(1);
+  const lunarShadow = scene.add
+    .graphics()
+    .setScale(ARENA.width / W, ARENA.height / H)
+    .setDepth(2);
+  const lunarDisk = scene.make.graphics({ x: 0, y: 0 });
+  lunarDisk
+    .setScale(ARENA.width / W, ARENA.height / H)
+    .fillStyle(0xffffff)
+    .fillCircle(821, 181, 132);
+  const lunarMask = lunarDisk.createGeometryMask();
+  lunarShadow.setMask(lunarMask);
+  // Soft, cached ink washes move between the floor and the foreground, keeping
+  // the expensive atmospheric texture generation out of the animation loop.
+  const fogKey = `${key}-mist`;
+  const fogTexture = scene.textures.createCanvas(fogKey, 512, 128);
+  if (fogTexture) {
+    const c = fogTexture.context;
+    for (let i = 0; i < 8; i++) {
+      const x = 25 + i * 65,
+        y = 58 + Math.sin(i * 2.1) * 22;
+      const wash = c.createRadialGradient(x, y, 0, x, y, 90);
+      wash.addColorStop(0, "#c9ccd435");
+      wash.addColorStop(1, "#c9ccd400");
+      c.fillStyle = wash;
+      c.fillRect(0, 0, 512, 128);
+    }
+    fogTexture.refresh();
+  }
+  const groundMist = scene.add
+    .image(ARENA.width / 2, 550, fogKey)
+    .setDisplaySize(ARENA.width * 1.2, 170)
+    .setDepth(25)
+    .setAlpha(0.24);
+  const foregroundMist = scene.add
+    .image(ARENA.width / 2, 795, fogKey)
+    .setDisplaySize(ARENA.width * 1.5, 140)
+    .setDepth(ARENA.height + 100)
+    .setAlpha(0.17);
   const shadows = scene.add.graphics().setDepth(30);
   const marks = scene.add.graphics().setDepth(40);
   const hunter = scene.add.graphics();
@@ -1442,10 +699,18 @@ export function createHuntRenderer(scene: Phaser.Scene) {
         0,
         1,
       );
+      const drift = v.reducedMotion ? 0 : Math.sin(v.time * 0.08) * 30;
+      groundMist.setX(ARENA.width / 2 + drift);
+      foregroundMist.setX(ARENA.width / 2 - drift * 0.7);
+      groundMist.setTint(v.phase === 2 ? 0xc8a9a0 : 0xd5d8df);
+      foregroundMist.setTint(v.phase === 2 ? 0xbda296 : 0xc9cdd8);
       eclipse.clear();
+      lunarShadow.clear();
       if (phaseMix > 0) {
         eclipse.fillStyle(0x652817, 0.11 * phaseMix).fillRect(0, 0, W, H);
-        eclipse.fillStyle(0x172021, 0.94 * phaseMix).fillCircle(793, 167, 126);
+        lunarShadow
+          .fillStyle(0x14171b, 0.97 * phaseMix)
+          .fillCircle(793, 167, 126);
         eclipse
           .lineStyle(1.4, 0xb7805b, 0.6 * phaseMix)
           .strokeCircle(821, 181, 134);
@@ -1521,7 +786,12 @@ export function createHuntRenderer(scene: Phaser.Scene) {
       for (const p of v.particles) {
         atmosphere
           .fillStyle(p.color, p.alpha)
-          .fillCircle(p.x, p.y, Math.max(0.5, p.size));
+          .fillEllipse(
+            p.x,
+            p.y,
+            Math.max(1, p.size * 1.05),
+            Math.max(0.7, p.size * 0.38),
+          );
         if (p.size > 1.5)
           atmosphere
             .lineStyle(0.7, p.color, p.alpha * 0.6)
@@ -1546,6 +816,11 @@ export function createHuntRenderer(scene: Phaser.Scene) {
     destroy() {
       backdrop.destroy();
       eclipse.destroy();
+      lunarShadow.clearMask().destroy();
+      lunarMask.destroy();
+      lunarDisk.destroy();
+      groundMist.destroy();
+      foregroundMist.destroy();
       shadows.destroy();
       marks.destroy();
       hunter.destroy();
@@ -1553,6 +828,7 @@ export function createHuntRenderer(scene: Phaser.Scene) {
       atmosphere.destroy();
       flashes.destroy();
       scene.textures.remove(key);
+      scene.textures.remove(fogKey);
     },
   };
 }

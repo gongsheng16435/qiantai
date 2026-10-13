@@ -33,8 +33,8 @@ export default function Home({
   });
   const statementY = useTransform(statementProgress, [0, 1], [40, -40]);
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
-  const featuredGames = ["journey", "rdr2", "hollowknight"].map(
-    (id) => games.find((g) => g.id === id)!,
+  const featuredGames = ["journey", "rdr2", "hollowknight"].map((id) =>
+    games.find((g) => g.id === id)!,
   );
   const headlines: Record<string, [string, string]> = {
     journey: ["去过的远方，", "仍在心上。"],
@@ -157,7 +157,11 @@ export default function Home({
         aria-label="进入 NIGHT HUNT 夜猎小游戏"
       >
         <img
-          src={`${import.meta.env.BASE_URL}night-hunt/cover.svg`}
+          src={`${import.meta.env.BASE_URL}night-hunt/cover.webp`}
+          onError={(event) => {
+            if (!event.currentTarget.src.endsWith("/cover.svg"))
+              event.currentTarget.src = `${import.meta.env.BASE_URL}night-hunt/cover.svg`;
+          }}
           alt="月下的钟庭废墟与巨兽线描"
           loading="lazy"
         />

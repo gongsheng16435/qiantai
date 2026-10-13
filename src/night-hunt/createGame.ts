@@ -14,7 +14,7 @@ export default async function createHuntGame(
         parent,
         width: ARENA.width,
         height: ARENA.height,
-        backgroundColor: "#101310",
+        backgroundColor: "#0c0e11",
         transparent: false,
         banner: false,
         antialias: true,

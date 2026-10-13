@@ -40,13 +40,15 @@ WASD / 方向键移动，鼠标左键挥刃（可按住连击），空格闪避�
 
 钟庭画布扩展为 1600 × 900，可移动面积较初版增加约 77%，便于绕身、退避与拉开距离。
 
+美术采用炭黑、石银与旧铜：本地废墟插画结合程序绘制的月亮、双层薄雾、重绘的猎人衣料与钟骸曲线轮廓。攻击预警加入深色底衬，刀光和碎屑保留清晰对比；封面从同一套场景与角色导出。界面的刻度、细线与月轮印记延续这一风格。
+
 单局按约 3–6 分钟的谨慎进攻节奏设计，熟练玩家可更快通关；倒下 0.95 秒后自动重开。页面提供静音、暂停、全屏、重开和结算；浏览器不允许原生全屏时仍以窗口全屏运行。切出窗口自动暂停，减少动态效果偏好会关闭震屏、强闪光和装饰性运动。
 
 ![NIGHT HUNT cover](docs/screenshots/night-hunt-cover.png)
 
 ![NIGHT HUNT arena](docs/screenshots/night-hunt-arena.png)
 
-美术和音乐均由本项目绘制 / 合成，不下载其他游戏的角色、场景或音轨；不需要 API、登录或额外资源服务。详见 [机制、架构与验证记录](docs/NIGHT_HUNT.md)。
+背景使用为本项目生成的原创插画；角色、月亮与战斗效果由代码绘制，音乐由 Web Audio 合成。不需要 API、登录或额外资源服务。详见 [机制、架构与验证记录](docs/NIGHT_HUNT.md) 与 [美术素材说明](docs/NIGHT_HUNT_ART.md)。
 
 ![Library](docs/screenshots/library-desktop.png)
 
@@ -104,6 +106,7 @@ src/
     createGame.ts         Lazy Phaser 3 boot and canvas scaling
     NightHuntScene.ts     Encounter, input, combat, particles, lifecycle
     renderer.ts           Original procedural line-art and two-phase environment
+    fighters.ts           Curved silhouettes, fabric, bones and action poses
     audio.ts              Web Audio music and synthesized sound effects
     types.ts              Small renderer / scene / React contracts
     night-hunt.css        Full-screen game interface and responsive styles
@@ -114,7 +117,7 @@ src/
 public/
   artwork/                Bundled photographs
   games/manifest.json     Optional per-game artwork overrides
-  night-hunt/cover.svg     Original local illustration
+  night-hunt/             Local courtyard/cover WebP and SVG cover fallback
 ```
 
 React + TypeScript + Vite, Framer Motion, and Lucide icons. Pages are loaded lazily. Routing uses `#/library`, `#/game/journey`, etc., so GitHub Pages deep links need no server rewrite. Vite uses a relative asset base, including when deployed below `/qiantai/`.

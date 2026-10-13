@@ -39,6 +39,26 @@ const initial: HuntSnapshot = {
   muted: false,
 };
 
+function HuntSeal({ complete = false }: { complete?: boolean }) {
+  return (
+    <svg
+      className={`hunt-seal ${complete ? "is-complete" : ""}`}
+      viewBox="0 0 64 64"
+      fill="none"
+      aria-hidden="true"
+    >
+      <circle cx="32" cy="32" r="23" />
+      <path d="M32 2v9m0 42v9M2 32h9m42 0h9M12 12l6 6m28 28 6 6M12 52l6-6m28-28 6-6" />
+      {complete ? (
+        <path d="m21 33 7 7 16-19M32 16v5m0 24v3" />
+      ) : (
+        <path d="M39 17a17 17 0 1 0 0 30 19 19 0 0 1 0-30Z" />
+      )}
+      <circle cx="32" cy="32" r="28" strokeDasharray="1 9" />
+    </svg>
+  );
+}
+
 function Controls({ compact = false }: { compact?: boolean }) {
   return (
     <div className={`hunt-instructions ${compact ? "compact" : ""}`}>
@@ -274,10 +294,20 @@ export default function NightHunt() {
         <>
           <img
             className="hunt-cover-art"
-            src={`${import.meta.env.BASE_URL}night-hunt/cover.svg`}
+            src={`${import.meta.env.BASE_URL}night-hunt/cover.webp`}
+            onError={(event) => {
+              if (!event.currentTarget.src.endsWith("/cover.svg"))
+                event.currentTarget.src = `${import.meta.env.BASE_URL}night-hunt/cover.svg`;
+            }}
             alt="线描月夜废墟中，猎人与钟骸巨兽相对而立"
           />
           <div className="hunt-cover-shade" />
+          <div className="hunt-cover-frame" aria-hidden="true">
+            <i />
+            <i />
+            <i />
+            <i />
+          </div>
           <header className="hunt-cover-header">
             <a href="#/" aria-label="返回 LUMEN">
               <ArrowLeft size={15} /> LUMEN
@@ -338,7 +368,9 @@ export default function NightHunt() {
           />
           {!loading && !error && (
             <div className={`hunt-hud ${overlay ? "is-dimmed" : ""}`}>
-              <div className="hunt-player-hud">
+              <div
+                className={`hunt-player-hud ${snapshot.health <= 30 ? "is-wounded" : ""}`}
+              >
                 <div className="hunt-hud-label">
                   <span>猎人</span>
                   <small>{Math.round(snapshot.health)} / 100</small>
@@ -419,10 +451,10 @@ export default function NightHunt() {
                 </button>
               </div>
               <div
-                className={`hunt-feedback ${snapshot.mode === "dead" ? "is-dead" : ""}`}
+                className={`hunt-feedback ${snapshot.message ? "has-message" : ""} ${snapshot.mode === "dead" ? "is-dead" : ""}`}
                 role="status"
               >
-                {snapshot.message}
+                <span>{snapshot.message}</span>
               </div>
               <div className="hunt-boss-hud">
                 <div className="hunt-boss-name">
@@ -487,7 +519,7 @@ export default function NightHunt() {
           )}
           {overlay && !loading && (
             <div
-              className="hunt-overlay"
+              className={`hunt-overlay ${snapshot.mode === "victory" ? "is-victory" : "is-paused"}`}
               role="dialog"
               aria-modal="true"
               aria-labelledby="hunt-dialog-title"
@@ -495,7 +527,8 @@ export default function NightHunt() {
             >
               {snapshot.mode === "victory" ? (
                 <>
-                  <span className="hunt-kicker">THE NIGHT IS YOURS</span>
+                  <HuntSeal complete />
+                  <span className="hunt-kicker">狩猎完成 · 天光将至</span>
                   <h2 id="hunt-dialog-title">长夜，终有回响。</h2>
                   <p>钟声沉寂。月光为你留下归途。</p>
                   <div className="hunt-results">
@@ -519,7 +552,8 @@ export default function NightHunt() {
                 </>
               ) : (
                 <>
-                  <span className="hunt-kicker">A MOMENT IN THE DARK</span>
+                  <HuntSeal />
+                  <span className="hunt-kicker">长夜之间 · 片刻休憩</span>
                   <h2 id="hunt-dialog-title">让月色，停留片刻。</h2>
                   <p>观察起手，留下精力。每次倒下，都是下一次抵达。</p>
                   <Controls />
